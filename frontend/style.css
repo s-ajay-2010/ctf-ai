@@ -1,0 +1,29 @@
+body {
+    font-family: Arial;
+    background: #111;
+    color: #eee;
+    padding: 20px;
+}
+
+h2 {
+    color: #00ffcc;
+}
+
+div {
+    background: #1e1e1e;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+}
+
+button {
+    background: #00ffcc;
+    border: none;
+    padding: 6px 10px;
+    cursor: pointer;
+}
+
+input {
+    padding: 5px;
+    margin-right: 5px;
+}
