@@ -8,6 +8,7 @@ from pydantic import BaseModel as bm
 from passlib.context import CryptContext as cc
 from jose import jwt
 from datetime import datetime, timedelta, timezone
+from challenges import router as challenge_router
 
 load_dotenv()
 SECRET_KEY =os.getenv("SECRET_KEY")
@@ -101,3 +102,4 @@ def protected(user: str = Depends(get_current_user)):
     return{"message": f"Hello {user}, you are authenticated"}
 
 
+app.include_router(challenge_router)
