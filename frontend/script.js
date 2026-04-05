@@ -32,7 +32,7 @@ async function login(){
 
              <input id="flag-${c.id}" placeholder="Enter flag">{/*</input>*/}
              <button onclick="submitFlag(${c.id})">Submit</button>
-             <button onclick="gethints(${c.id})">Hints</button>
+             <button onclick="getHints(${c.id})">Hints</button>
 
              <p id="result-${c.id}"></p>
              <hr>
@@ -42,6 +42,7 @@ async function login(){
 
 }
 
+//---------------------------------------------------------------------------------------------
 
 async function submitFlag(id) {
     const token = localStorage.getItem("token");
@@ -51,7 +52,7 @@ async function submitFlag(id) {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Aithorization": `Bearer ${token}`
+            "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({
             challenge_id: id,
@@ -65,6 +66,8 @@ async function submitFlag(id) {
 }
 
 
+//-----------------------------------------------------------------------------------------
+
 async function getHints(id){
     const token = localStorage.getItem("token");
     const res = await fetch(`${API}/hints/${id}`,{
@@ -76,6 +79,9 @@ async function getHints(id){
     const data = await res.json();
     alert(data.hints.join("\n"));
 }
+
+//----------------------------------------------------------------------------------------------
+
 
 async function loadScoreboard(){
     const token = localStorage.getItem("token");
@@ -90,7 +96,40 @@ async function loadScoreboard(){
     container.innerHTML = "";
 
     data.forEach(u=>{
-        container.innerHTML += `<p>&{u.user}: ${u.score}</p>`;
+        container.innerHTML += `<p>${u.user}: ${u.score}</p>`;
+    });
+}
+
+//-------------------------------------------------------------------------------------------
+
+
+async function loadChallenges(){
+    const token = localStorage.getItem("token");
+    const res = await fetch(`${API}/challenges`, {
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    });
+
+    const data = await res.json();
+    const container = document.getElementById("challenges");
+    container.innerHTML = "";
+
+    data.forEach(c=> {
+        container.innerHTML+= `
+         <div>
+             <h3>${c.title} (${c.pints} pts)</h3>
+             <p>${c.description}</p>
+             <p>Status: ${c.solved ? "Solved:) !!!" : "Not solved bruh (-_-)"}</p>
+
+             <input id="flag-${c.id}" placeholder="Enter flag">
+             <button onclick="submitFlag(${c.id})">Submit</button>
+             <button inclick="getHints(${c.id})">Hints</button>
+
+             <p id="result-${c.id}"></p>
+             <hr>
+         </div>
+        `;
     });
 }
 
