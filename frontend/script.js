@@ -77,7 +77,10 @@ async function getHints(id){
     });
 
     const data = await res.json();
-    alert(data.hints.join("\n"));
+    const container = document.getElementsById(`hints-${id}`);
+    container.innerHTML = data.hints.map(h => `<p>Hint: ${h}</p>`).join("");
+    
+    document.querySelector(`button[onclick="getHints(${id})"]`).style.display = "none";
 }
 
 //----------------------------------------------------------------------------------------------
@@ -116,16 +119,18 @@ async function loadChallenges(){
     container.innerHTML = "";
 
     data.forEach(c=> {
-        container.innerHTML+= `
-         <div>
+        const disabled = c.solved ? "disabled" : "";
+        const opacity = c.solved ? "0.5" : "1";
+
+        container.innerHTML += `
+         <div style="opacity:${opacity}">
              <h3>${c.title} (${c.points} pts)</h3>
              <p>${c.description}</p>
              <p>Status: ${c.solved ? "Solved:) !!!" : "Not solved bruh (-_-)"}</p>
-
-             <input id="flag-${c.id}" placeholder="Enter flag">
-             <button onclick="submitFlag(${c.id})">Submit</button>
-             <button onclick="getHints(${c.id})">Hints</button>
-
+             <input id="flag-${c.id}" placeholder="Enter Flag" ${disabled}>
+             <button onclick="submitFlag(${c.id})" ${disabled}>Submit</button>
+             <button onclick="getHints(${c.id})" ${disabled}>Hints</button>
+             <div id="hints-${c.id}" style="margin-top:10px; color:#94a3b8;"></div>
              <p id="result-${c.id}"></p>
              <hr>
          </div>
