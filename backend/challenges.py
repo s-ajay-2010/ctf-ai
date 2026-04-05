@@ -48,7 +48,12 @@ def get_challenges(user: str = Depends(get_current_user), category: str = None, 
             "description": c["description"],
             "points": c["points"],
             "category": c["category"],
-            "difficulty": c["difficulty"]
+            "difficulty": c["difficulty"],
+            "solved": c["id"] in [
+                s["challenge_id"]
+                for s in submissions
+                if s["user"] == user
+            ]
         }
         for c in result
     ]
@@ -96,3 +101,12 @@ def get_hints(challenge_id: int, user: str = Depends(get_current_user)):
         if c["id"] == challenge_id:
             return {"hints": c["hints"]}
     raise HTTPException(status_code=404, detail="Challenge not found")
+
+@router.get("/solved")
+def get_solved(user: str = Depends(get_current_user)):
+    solved_ids = [
+        s["challenge_id"]
+        for s in submissions
+        if s["user"] == user
+    ]
+    return {"solved": solved_ids}
