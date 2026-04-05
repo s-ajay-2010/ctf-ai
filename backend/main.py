@@ -11,6 +11,7 @@ from datetime import datetime, timedelta, timezone
 from challenges import router as challenge_router
 from deps import get_current_user
 from models import users, login_attempts
+from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()
 SECRET_KEY =os.getenv("SECRET_KEY")
@@ -24,6 +25,13 @@ ALGORITHM = "HS256"
 
 pwd_context = cc(schemes=["bcrypt"], deprecated="auto")
 app=fahh()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins = ["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 
