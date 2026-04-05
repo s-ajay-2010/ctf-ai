@@ -10,6 +10,7 @@ from jose import jwt
 from datetime import datetime, timedelta, timezone
 from challenges import router as challenge_router
 from deps import get_current_user
+from models import users, login_attempts
 
 load_dotenv()
 SECRET_KEY =os.getenv("SECRET_KEY")
@@ -24,8 +25,7 @@ ALGORITHM = "HS256"
 pwd_context = cc(schemes=["bcrypt"], deprecated="auto")
 app=fahh()
 
-users=[]
-login_attempts= {}
+
 
 class User(bm):
     username:str
