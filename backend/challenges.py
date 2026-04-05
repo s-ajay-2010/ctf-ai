@@ -12,7 +12,8 @@ challenges = [
         "flag": "flag{easy_web}",
         "points": 20,
         "category": "web",
-        "difficulty": "easy"
+        "difficulty": "easy",
+        "hints": ["Check page source", "Look for hidden elements"]
     },
     {
        "id": 2,
@@ -21,7 +22,8 @@ challenges = [
        "flag": "flag{crypto123}",
        "points": 20,
        "category": "crypto",
-       "difficulty": "medium" 
+       "difficulty": "medium",
+       "hints": ["Try base64", "Look for patterns"]
     }
 ]
 
@@ -33,7 +35,12 @@ class FlagSubmission(bm):
 
 
 @router.get("/challenges")
-def get_challenges(user: str = Depends(get_current_user)):
+def get_challenges(user: str = Depends(get_current_user), category: str = None, difficulty: str = None):
+    result = challenges
+    if category:
+        result = [c for c in result if c["category"] == category]
+    if difficulty:
+        result = [c for c in result if c["difficulty"] == difficulty]
     return[
         {
             "id": c["id"],
@@ -43,7 +50,7 @@ def get_challenges(user: str = Depends(get_current_user)):
             "category": c["category"],
             "difficulty": c["difficulty"]
         }
-        for c in challenges
+        for c in result
     ]
 
 @router.post("/submit")
@@ -74,5 +81,18 @@ def scoreboard(user: str = Depends(get_current_user)):
         for c in challenges:
             if c["id"] == s["challenge_id"]:
                 scores[s["user"]] += c["points"]
+    
+    leaderboard = [
+        {"user": u, "score": score}
+        for u, score in scores.items()
+    ]
+    leaderboard.sort(key=lambda x: x["score"], reverse=True)
 
-    return scores
+    return leaderboard
+
+@router.get("/hints/{challenge_id}")
+def get_hints(challenge_id: int, user: str = Depends(get_current_user)):
+    for c in challenges:
+        if c["id"] == challenge_id:
+            return {"hints": c["hints"]}
+    raise HTTPException(status_code=404, detail="Challenge not found")
