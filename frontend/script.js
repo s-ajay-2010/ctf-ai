@@ -118,13 +118,13 @@ async function loadChallenges(){
     data.forEach(c=> {
         container.innerHTML+= `
          <div>
-             <h3>${c.title} (${c.pints} pts)</h3>
+             <h3>${c.title} (${c.points} pts)</h3>
              <p>${c.description}</p>
              <p>Status: ${c.solved ? "Solved:) !!!" : "Not solved bruh (-_-)"}</p>
 
              <input id="flag-${c.id}" placeholder="Enter flag">
              <button onclick="submitFlag(${c.id})">Submit</button>
-             <button inclick="getHints(${c.id})">Hints</button>
+             <button onclick="getHints(${c.id})">Hints</button>
 
              <p id="result-${c.id}"></p>
              <hr>
@@ -132,6 +132,8 @@ async function loadChallenges(){
         `;
     });
 }
+
+//-----------------------------------------------------------------------------------------
 
 
 if(window.location.pathname.includes("dashboard.html")){
