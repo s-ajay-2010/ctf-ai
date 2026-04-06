@@ -110,3 +110,60 @@ def get_solved(user: str = Depends(get_current_user)):
         if s["user"] == user
     ]
     return {"solved": solved_ids}
+
+
+class ChallengeCreate(bm):
+    title: str
+    description:str
+    flag: str
+    points: int
+    category: str
+    difficulty: str
+    hints: list[str]
+
+def is_admin(user: str):
+    return user == "admin"
+
+@router.post("/admin/create")
+def create_challenge(data: ChallengeCreate, user: str = Depends(get_current_user)):
+    if not is_admin(user):
+        raise HTTPException(status_code=403, detail="Admins only")
+    new_id = max([c["id"] for c in challenges]) + 1 if challenges else 1
+
+    challenges.append({
+        "id": new_id,
+        "title": data.title,
+        "description": data.description,
+        "flag": data.flag,
+        "points": data.points,
+        "category": data.category,
+        "difficulty": data.difficulty,
+        "hints": data.hints
+    })
+
+    return {"message": "Challenge created"}
+
+
+@router.delete("/admin/delete/{challenge_id}")
+def delete_challenge(challenge_id: int, user: str = Depends(get_current_user)):
+    if not is_admin(user):
+        raise HTTPException(status_code=403, detail="Admins only")
+    
+    for c in challenges:
+        if c["id"]== challenge_id:
+            challenges.remove(c)
+            return {"message": "Deleted"}
+        
+    raise HTTPException(status_code=404, detail="Not found")
+
+@router.put("/admin/edit/{challenge_id}")
+def edit_challenge(challenge_id: int, data: ChallengeCreate, user: str = Depends(get_current_user)):
+    if not is_admin(user):
+        raise HTTPException(status_code=403, detail="Admins only!")
+    
+    for c in challenges:
+        if c["id"] == challenge_id:
+            c.update(data.dict())
+            return {"message": "Updated"}
+        
+    raise HTTPException(status_code=404, detail="Not found")

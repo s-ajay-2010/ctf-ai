@@ -2,3 +2,4 @@
 /backend/venv
 /backend/__pycache__
 /.vscode
+/backend/ctf.db

@@ -12,6 +12,10 @@ from challenges import router as challenge_router
 from deps import get_current_user
 from models import users, login_attempts
 from fastapi.middleware.cors import CORSMiddleware
+from database import init_db
+from database import cursor, conn
+
+init_db()
 
 load_dotenv()
 SECRET_KEY =os.getenv("SECRET_KEY")
@@ -56,14 +60,7 @@ def home():
 
 @app.post("/register")
 def register(user: User):
-    for u in users:
-        if u["username"] == user.username:
-            raise HTTPException(status_code=400, detail="User already exists!!")
-    
-    users.append({
-        "username": user.username,
-        "password": hash_password(user.password)
-    })
+    cursor.execute
 
     return {"msg": "User registered successfully"}
 
