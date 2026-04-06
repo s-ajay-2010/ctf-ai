@@ -1,4 +1,3 @@
-from jose.exceptions import JWTError
 from dotenv import load_dotenv
 import os
 from fastapi import FastAPI as fahh
@@ -7,13 +6,13 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel as bm
 from passlib.context import CryptContext as cc
 from jose import jwt
+from jose.exceptions import JWTError
 from datetime import datetime, timedelta, timezone
 from challenges import router as challenge_router
 from deps import get_current_user
 from models import users, login_attempts
 from fastapi.middleware.cors import CORSMiddleware
-from database import init_db
-from database import cursor, conn
+from database import init_db, cursor, conn
 
 init_db()
 

@@ -5,115 +5,96 @@ from database import cursor, conn
 
 router = APIRouter()
 
-challenges = [
-    {
-        "id": 1,
-        "title": "Basic Web",
-        "description": "Find the hidden flag in the page",
-        "flag": "flag{easy_web}",
-        "points": 20,
-        "category": "web",
-        "difficulty": "easy",
-        "hints": ["Check page source", "Look for hidden elements"]
-    },
-    {
-       "id": 2,
-       "title": "Crypto Intro",
-       "description": "Decode the message",
-       "flag": "flag{crypto123}",
-       "points": 20,
-       "category": "crypto",
-       "difficulty": "medium",
-       "hints": ["Try base64", "Look for patterns"]
-    }
-]
-
-
-
-
-submissions =[]
-
 class FlagSubmission(bm):
     challenge_id: int
     flag: str
 
 
 @router.get("/challenges")
-def get_challenges(user: str = Depends(get_current_user), category: str = None, difficulty: str = None):
-    result = challenges
-    if category:
-        result = [c for c in result if c["category"] == category]
-    if difficulty:
-        result = [c for c in result if c["difficulty"] == difficulty]
-    return[
-        {
-            "id": c["id"],
-            "title": c["title"],
-            "description": c["description"],
-            "points": c["points"],
-            "category": c["category"],
-            "difficulty": c["difficulty"],
-            "solved": c["id"] in [
-                s["challenge_id"]
-                for s in submissions
-                if s["user"] == user
-            ]
-        }
-        for c in result
-    ]
+def get_challenges(user: str = Depends(get_current_user)):
+    cursor.execute("SELECT * FROM challenges")
+    challenges = cursor.fetchall()
+
+    cursor.execute("SELECT challenge_id FROM submissions WHERE user=?", (user,))
+    solved_ids = [row[0] for row in cursor.fetchall()]
+
+    result = []
+    for c in challenges:
+        result.append({
+            "id": c[0],
+            "title": c[1],
+            "description": c[2],
+            "points": c[4],
+            "category": c[5],
+            "difficulty": c[6],
+            "solved": c[0] in solved_ids
+        })
+    
+    return result
 
 @router.post("/submit")
 def submit_flag(data: FlagSubmission, user: str = Depends(get_current_user)):
-    for c in challenges:
-        if c["id"] == data.challenge_id:
+    cursor.execute("SELECT flag FROM challenges WHERE id=?", (data.challenge_id,))
+    row = cursor.fetchone()
 
-            for s in submissions:
-                if s["user"] == user and s["challenge_id"] == c["id"]:
-                    return {"message": "Already solved bruh (-_-)"}
-            
-            if c["flag"]  == data.flag:
-                submissions.append({"user": user, "challenge_id": c["id"]})
-                return{"message": "Correct Flag!!!"}
-            
-            return {"message": "Wrong Flag:("}
-    raise HTTPException(status_code=404, detail="Challenge not found.")
+    if not row:
+        raise HTTPException(status_code=404, detail="Challenge not found")
+    correct_flag = row[0]
+
+    cursor.execute(
+        "SELECT * FROM submissions WHERE user=? AND challenge_id=?",
+        (user, data.challenge_id)
+    )
+    if cursor.fetchone():
+        return {"message": "Already solved!!"}
+    
+    if data.flag == correct_flag:
+        cursor.execute(
+            "INSERT INTO submissions (user, challenge_id) VALUES (?, ?)",
+            (user, data.challenge_id)
+        )
+        conn.commit()
+        return {"message": "Correct flag!!!!"}
+    return {"message": "Wrong Flag:("}
     
 
 
 @router.get("/scoreboard")
 def scoreboard(user: str = Depends(get_current_user)):
-    scores ={}
+    cursor.execute("""
+        SELECT user, SUM(challenges.points)
+        FROM submissions
+        JOIN challenges ON submissions.challenge_id = challenges.id
+        GROUP BY user
+        ORDER BY SUM(challenges.points) DESC
+    """)
 
-    for s in submissions:
-        scores.setdefault(s["user"], 0)
-
-        for c in challenges:
-            if c["id"] == s["challenge_id"]:
-                scores[s["user"]] += c["points"]
-    
-    leaderboard = [
-        {"user": u, "score": score}
-        for u, score in scores.items()
-    ]
-    leaderboard.sort(key=lambda x: x["score"], reverse=True)
-
-    return leaderboard
+    rows = cursor.fetchall()
+    return [{"user": r[0], "score": r[1]} for r in rows]
 
 @router.get("/hints/{challenge_id}")
 def get_hints(challenge_id: int, user: str = Depends(get_current_user)):
-    for c in challenges:
-        if c["id"] == challenge_id:
-            return {"hints": c["hints"]}
-    raise HTTPException(status_code=404, detail="Challenge not found")
+   cursor.execute(
+       "SELECT hint FROM hints WHERE challenge_id=?",
+       (challenge_id,)
+   )
+
+   hints = [row[0] for row in cursor.fetchall()]
+
+   if not hints:
+       raise HTTPException(status_code=404, detail="No hints found")
+   
+   return {"hints": hints}
 
 @router.get("/solved")
 def get_solved(user: str = Depends(get_current_user)):
-    solved_ids = [
-        s["challenge_id"]
-        for s in submissions
-        if s["user"] == user
-    ]
-    return {"solved": solved_ids}
+    cursor.execute(
+        "SELECT challenge_id FROM submissions WHERE user=?",
+        (user,)
+    )
+
+    solved_ids = [row[0] for row in cursor.fetchall()]
+    return{"solved": solved_ids}
 
 
 class ChallengeCreate(bm):
@@ -130,44 +111,74 @@ def is_admin(user: str):
 
 @router.post("/admin/create")
 def create_challenge(data: ChallengeCreate, user: str = Depends(get_current_user)):
-    if not is_admin(user):
+    if user != "admin":
         raise HTTPException(status_code=403, detail="Admins only")
-    new_id = max([c["id"] for c in challenges]) + 1 if challenges else 1
+    cursor.execute("""
+        INSERT INTO challenges (title, description, flag, points, category, difficulty)
+        VALUES (?, ?, ?, ?, ?, ?)
+        """, (
+            data.title,
+            data.description,
+            data.flag,
+            data.points,
+            data.category,
+            data.difficulty
+        )
+    )
 
-    challenges.append({
-        "id": new_id,
-        "title": data.title,
-        "description": data.description,
-        "flag": data.flag,
-        "points": data.points,
-        "category": data.category,
-        "difficulty": data.difficulty,
-        "hints": data.hints
-    })
+    challenge_id = cursor.lastrowid
 
+    for h in data.hints:
+        cursor.execute(
+            "INSERT INTO hints (challenge_id, hint) VALUES (?, ?)",
+            (challenge_id, h)
+        )
+    conn.commit()
     return {"message": "Challenge created"}
 
 
 @router.delete("/admin/delete/{challenge_id}")
 def delete_challenge(challenge_id: int, user: str = Depends(get_current_user)):
-    if not is_admin(user):
+    if user != "admin":
         raise HTTPException(status_code=403, detail="Admins only")
     
-    for c in challenges:
-        if c["id"]== challenge_id:
-            challenges.remove(c)
-            return {"message": "Deleted"}
-        
-    raise HTTPException(status_code=404, detail="Not found")
+    cursor.execute("DELETE FROM challenges WHERE id=?", (challenge_id, ))
+    cursor.execute("DELETE FROM hints WHERE challenge_id=?", (challenge_id, ))
+    cursor.execute("DELETE FROM submissions WHERE challenge_id=?", (challenge_id, ))
+
+    conn.commit()
+    return {"message": "Deleted"}
+    
+
+
 
 @router.put("/admin/edit/{challenge_id}")
 def edit_challenge(challenge_id: int, data: ChallengeCreate, user: str = Depends(get_current_user)):
-    if not is_admin(user):
-        raise HTTPException(status_code=403, detail="Admins only!")
+    if user != "admin":
+        raise HTTPException(status_code=403, detail="Admins only")
     
-    for c in challenges:
-        if c["id"] == challenge_id:
-            c.update(data.dict())
-            return {"message": "Updated"}
-        
-    raise HTTPException(status_code=404, detail="Not found")
+    cursor.execute("""
+        UPDATE challenges
+        SET title=?, description=?, flag=?, points=?, category=?, difficulty=?
+        WHERE id=?
+        """, (
+            data.title,
+            data.description,
+            data.flag,
+            data.points,
+            data.category,
+            data.difficulty,
+            challenge_id
+        )
+    )
+
+    cursor.execute("DELETE FROM hints WHERE challenge_id=?", (challenge_id, ))
+
+    for h in data.hints:
+        cursor.execute(
+            "INSERT INTO hints (challenge_id, hint) VALUES (?, ?)",
+            (challenge_id, h)
+        )
+
+    conn.commit()
+    return {"message": "Updated"}

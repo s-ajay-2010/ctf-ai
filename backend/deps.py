@@ -5,6 +5,7 @@ from jose import jwt
 from jose.exceptions import JWTError
 import os
 from models import users
+from database import cursor
 
 load_dotenv()
 security = HTTPBearer()
@@ -19,8 +20,13 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
 
         if user is None:
             raise HTTPException(status_code=401, detail="Invalid token")
-        if user not in [u["username"] for u in users]:
+        
+        cursor.execute("SELECT username FROM users WHERE username=?", (user, ))
+        db_user = cursor.fetchone()
+
+        if not db_user:
             raise HTTPException(status_code=401, detail="User no longer exists")
+
         return user
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
