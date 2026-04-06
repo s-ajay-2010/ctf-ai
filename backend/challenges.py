@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel as bm
 from deps import get_current_user
+from database import cursor, conn
 
 router = APIRouter()
 
@@ -26,6 +27,9 @@ challenges = [
        "hints": ["Try base64", "Look for patterns"]
     }
 ]
+
+
+
 
 submissions =[]
 

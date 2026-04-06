@@ -24,6 +24,14 @@ def init_db():
         )
     """)
 
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS submissions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user TEXT,
+            challenge_id INTEGER
+        )
+    """)
+
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS hints (
