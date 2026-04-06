@@ -79,7 +79,10 @@ def login(user: User):
 
     if db_user and verify_password(user.password, db_user[2]):
         token = create_token({"sub": user.username})
-        return {"access_token": token}
+        return {
+            "access_token": token,
+            "is_admin": user.username == "admin"
+            }
 
     raise HTTPException(status_code=401, detail="Invalid username or password.")
 

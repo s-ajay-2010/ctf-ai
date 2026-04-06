@@ -14,13 +14,16 @@ async function login(){
 
     if(res.ok){
         localStorage.setItem("token", data.access_token);
-        window.location.href = "dashboard.html";
+        if(data.is_admin){
+            window.location.href = "admin.html";
+        }
+        else{
+            window.location.href = "dashboard.html";
+        }
     }
     else{
         document.getElementById("msg").innerText = data.detail;
     }
-
-
 }
 
 //---------------------------------------------------------------------------------------------
@@ -64,7 +67,7 @@ async function getHints(id){
     document.querySelector(`button[onclick="getHints(${id})"]`).style.display = "none";
 }
 
-//----------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------
 
 
 async function loadScoreboard(){
@@ -84,7 +87,7 @@ async function loadScoreboard(){
     });
 }
 
-//-------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------------
 
 
 async function loadChallenges(){
@@ -119,8 +122,35 @@ async function loadChallenges(){
     });
 }
 
-//-----------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------------
 
+async function createChallenge(){
+    const token = localStorage.getItem("token");
+
+    const data = {
+        title: document.getElementById("title").value,
+        description: document.getElementById("desc").value,
+        flag: document.getElementById("flag").value,
+        points: parseInt(document.getElementById("points").value),
+        category: document.getElementById("category").value,
+        difficulty: document.getElementById("difficulty").value,
+        hints: document.getElementById("hints").value.split(",")
+    };
+
+    const res= await fetch(`${API}/admin/create`, {
+        method: "POST",
+        headers:{
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(data)
+    });
+
+    const result = await res.json();
+    document.getElementById("msg").innerText = result.message;
+}
+
+//----------------------------------------------------------------------------------------------------------------------------
 
 if(window.location.pathname.includes("dashboard.html")){
     loadChallenges();
