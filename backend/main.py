@@ -60,7 +60,7 @@ def home():
 
 @app.post("/register")
 def register(user: User):
-    cursor.execute("SECLECT * FROM users WHERE username=?", (user.username,))
+    cursor.execute("SELECT * FROM users WHERE username=?", (user.username,))
     if cursor.fetchone():
         raise HTTPException(status_code=400, detail="User exists")
     
@@ -78,11 +78,11 @@ def login(user: User):
     cursor.execute("SELECT * FROM users WHERE username=?", (user.username, ))
     db_user = cursor.fetchone()
 
-    if db_user and verify_password(user.passoword, db_user[2]):
+    if db_user and verify_password(user.password, db_user[2]):
         token = create_token({"sub": user.username})
         return {"access_token": token}
 
-    raise HTTPException(status_code=401, detail="Invaild username or password.")
+    raise HTTPException(status_code=401, detail="Invalid username or password.")
 
 
 def create_token(data: dict):

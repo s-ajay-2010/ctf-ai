@@ -26,7 +26,7 @@ def init_db():
 
 
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS hitns (
+        CREATE TABLE IF NOT EXISTS hints (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             challenge_id INTEGER,
             hint TEXT

@@ -20,25 +20,6 @@ async function login(){
         document.getElementById("msg").innerText = data.detail;
     }
 
-    const container = document.getElementById("challenges");
-    container.innerHTML = "";
-
-    data.forEach(c => {
-        container.innerHTML += `
-         <div>
-             <h3>${c.title} (${c.points} pts)</h3>
-             <p>${c.description}</p>
-             <p>Status: ${c.solved ? "Solved!!" : "Not solved bruh (-_-)"}</p>
-
-             <input id="flag-${c.id}" placeholder="Enter flag">{/*</input>*/}
-             <button onclick="submitFlag(${c.id})">Submit</button>
-             <button onclick="getHints(${c.id})">Hints</button>
-
-             <p id="result-${c.id}"></p>
-             <hr>
-         </div>
-        `;
-    });
 
 }
 
@@ -46,7 +27,7 @@ async function login(){
 
 async function submitFlag(id) {
     const token = localStorage.getItem("token");
-    const flag = document. getElementById(`flag-${id}`).value;
+    const flag = document.getElementById(`flag-${id}`).value;
 
     const res = await fetch(`${API}/submit`,{
         method: "POST",
@@ -77,7 +58,7 @@ async function getHints(id){
     });
 
     const data = await res.json();
-    const container = document.getElementsById(`hints-${id}`);
+    const container = document.getElementById(`hints-${id}`);
     container.innerHTML = data.hints.map(h => `<p>Hint: ${h}</p>`).join("");
     
     document.querySelector(`button[onclick="getHints(${id})"]`).style.display = "none";
