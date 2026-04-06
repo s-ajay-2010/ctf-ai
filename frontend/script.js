@@ -26,7 +26,7 @@ async function login(){
     }
 }
 
-//---------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------------
 
 async function submitFlag(id) {
     const token = localStorage.getItem("token");
@@ -50,7 +50,7 @@ async function submitFlag(id) {
 }
 
 
-//-----------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------------
 
 async function getHints(id){
     const token = localStorage.getItem("token");
@@ -67,7 +67,7 @@ async function getHints(id){
     document.querySelector(`button[onclick="getHints(${id})"]`).style.display = "none";
 }
 
-//--------------------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------------
 
 
 async function loadScoreboard(){
@@ -87,7 +87,7 @@ async function loadScoreboard(){
     });
 }
 
-//-----------------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------------
 
 
 async function loadChallenges(){
@@ -150,10 +150,53 @@ async function createChallenge(){
     document.getElementById("msg").innerText = result.message;
 }
 
-//----------------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------------
 
+async function loadAdminChallenges(){
+    const token = localStorage.getItem("token");
+
+    const res = await fetch(`${API}/admin/challenges`, {
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    });
+
+    const data =await res.json();
+    const container = document.getElementById("admin-challenges");
+    container.innerHTML = "";
+
+    data.forEach(c =>{
+        container.innerHTML += `
+        <div>
+            <b>${c.title}</b> (${c.points} pts)
+            <button onclick="deleteChallenge(${c.id})">Delete</button>
+        </div>
+        `;
+    });
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------
+
+async function deleteChallenge(id){
+    const token = localStorage.getItem("token");
+
+    await fetch(`${API}/admin/delete/${id}`, {
+        method: "DELETE",
+        headers:{
+            "Authorization": `Bearer ${token}`
+        }
+    });
+
+    loadAdminChallenges();
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------
 if(window.location.pathname.includes("dashboard.html")){
     loadChallenges();
+}
+
+if(window.location.pathname.includes("admin.html")){
+    loadAdminChallenges();
 }
 
 

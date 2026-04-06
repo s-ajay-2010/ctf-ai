@@ -182,3 +182,23 @@ def edit_challenge(challenge_id: int, data: ChallengeCreate, user: str = Depends
 
     conn.commit()
     return {"message": "Updated"}
+
+
+@router.get("/admin/challenges")
+def admin_get_challenges(user: str = Depends(get_current_user)):
+    if user != "admin":
+        raise HTTPException(status_code=403, detail="Admins only")
+    
+    cursor.execute("SELECT * FROM challenges")
+    rows = cursor.fetchall()
+
+    return[
+        {
+            "id": r[0],
+            "title": r[1],
+            "points": r[4],
+            "category": r[5],
+            "difficulty": r[6]
+        }
+        for r in rows
+    ]
