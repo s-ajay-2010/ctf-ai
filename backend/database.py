@@ -41,4 +41,5 @@ def init_db():
         )
  """)
     
+    
     conn.commit()
