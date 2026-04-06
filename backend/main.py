@@ -70,21 +70,18 @@ def register(user: User):
     )
 
     conn.commit()
-    
+
     return {"msg": "User registered successfully"}
 
 @app.post("/login")
 def login(user: User):
-    attempts = login_attempts.get(user.username, 0)
-    if attempts>=5:
-        raise HTTPException(status_code=429, detail="Too many attempts")
-    for u in users:
-        if u["username"] == user.username and verify_password(user.password, u["password"]):
-            login_attempts[user.username] =0
-            token = create_token({"sub": user.username, "type": "access"})
-            return {"access_token": token, "token_type": "bearer"}
-    
-    login_attempts[user.username] = attempts+1        
+    cursor.execute("SELECT * FROM users WHERE username=?", (user.username, ))
+    db_user = cursor.fetchone()
+
+    if db_user and verify_password(user.passoword, db_user[2]):
+        token = create_token({"sub": user.username})
+        return {"access_token": token}
+
     raise HTTPException(status_code=401, detail="Invaild username or password.")
 
 
