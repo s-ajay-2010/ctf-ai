@@ -107,7 +107,7 @@ async function loadChallenges(){
         const opacity = c.solved ? "0.5" : "1";
 
         container.innerHTML += `
-         <div style="opacity:${opacity}">
+         <div class="card" style="opacity:${opacity}">
              <h3>${c.title} (${c.points} pts)</h3>
              <p>${c.description}</p>
              <p>Status: ${c.solved ? "Solved:) !!!" : "Not solved bruh (-_-)"}</p>
@@ -191,8 +191,18 @@ async function deleteChallenge(id){
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------
+
+function loadUser(){
+    const token = localStorage.getItem("token");
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    document.getElementById("username-display").innerText = "User: " + payload.sub;
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------
 if(window.location.pathname.includes("dashboard.html")){
     loadChallenges();
+    loadUser();
+    shwoChallenges();
 }
 
 if(window.location.pathname.includes("admin.html")){

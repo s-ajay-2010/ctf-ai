@@ -43,3 +43,63 @@ input {
     border: none;
     margin-right: 5px;
 }
+
+.layout{
+    display: flex;
+}
+
+.sidebar{
+    width:220px;
+    background: #020617;
+    height: 100vh;
+    padding: 20px;
+    border-right: 1px solid #1e293b;
+}
+
+.sidebar h2 {
+    color: #38bdf8;
+}
+
+.sidebar a {
+    display: block;
+    margin: 10px 0;
+    cursor: pointer;
+    color: #94a3b8;
+}
+
+.sidebar a:hover {
+    color: #38bdf8;
+}
+
+.content {
+    flex: 1;
+    padding: 20px;
+}
+
+.card {
+    background: #1e293b;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #334155;
+    transition: 0.2s;
+}
+
+.card:hover {
+    border-color: #38bdf8;
+    transform: scale(1.01);
+}
+
+#scoreboard p{
+    background: #1e293b;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 5px;
+}
+
+.topbar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 15px;
+    color: #94a3b8;
+}

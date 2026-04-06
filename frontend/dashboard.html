@@ -2,14 +2,25 @@
 <html>
     <head>
         <title>Dashboard</title>
+        <link rel="stylesheet" href="style.css">
     </head>
     <body>
-        <link rel="stylesheet" href="style.css">
-        <h2>Challenges</h2>
-        <div id="challenges"></div>
-        <h2>Scoreboard</h2>
-        <button onclick="loadScoreboard()">Load Scoreboard</button>
-        <div id="scoreboard"></div>
+        <div class="layout">
+            <aside class="sidebar">
+                <h2>CTF</h2>
+                <a onclick="loadChallenges()">Challenges</a>
+                <a onclick="loadScoreboard()">Scoreboard</a>
+            </aside>
+
+            <main class="content">
+                <h2>Dashboard</h2>
+                <span id=""username-display"></span>
+                <div id="challenges"></div>
+
+                <h2>Scoreboard</h2>
+                <div id="scoreboard"></div>
+            </main>
+        </div>
         <script src="script.js"></script>
     </body>
 </html>
