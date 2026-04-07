@@ -227,7 +227,7 @@ async function loadAdminChallenges(){
 //-----------------------------------------------------------------------------------------------------------------------------
 
 async function deleteChallenge(id){
-    if(!confirm("Are you sure you want to this challenge??")){
+    if(!confirm("Are you sure you want to do this challenge??")){
         return;
     }
 
