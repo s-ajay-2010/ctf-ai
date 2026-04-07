@@ -103,3 +103,18 @@ input {
     margin-bottom: 15px;
     color: #94a3b8;
 }
+
+.progress-bar {
+    width: 200px;
+    height: 8px;
+    background: #1e293b;
+    border-radius: 10px;
+    margin-left: 10px;
+}
+
+#progress-fill {
+    height: 100%;
+    background: #38bdf8;
+    width: 0%;
+    border-radius: 10px;
+}

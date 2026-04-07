@@ -72,18 +72,28 @@ async function getHints(id){
 
 async function loadScoreboard(){
     const token = localStorage.getItem("token");
-    const res = await fetch(`${API}/scoreboard`,{
-        headers:{
-            "Authorization": `Bearer ${token}`
-        }
+
+    const res = await fetch(`${API}/scoreboard`, {
+        headers:{"Authorization": `Bearer ${token}`}
     });
 
     const data = await res.json();
     const container = document.getElementById("scoreboard");
     container.innerHTML = "";
 
-    data.forEach(u=>{
-        container.innerHTML += `<p>${u.user}: ${u.score}</p>`;
+    const currentUser = JSON.parse(atob(token.split(".")[1])).sub;
+
+    let rank =1;
+
+    data.forEach((u, index) => {
+        if(index > 0 && u.score < data[index - 1].score){
+            rank = index + 1;
+        }
+        const highlight = u.user === currentUser ? "style='color: #38bdf8'" : "";
+
+        container.innerHTML += `
+        <p ${highlight}>#${rank} ${u.user}: ${u.score}</p>
+        `;
     });
 }
 
@@ -148,6 +158,8 @@ async function createChallenge(){
 
     const result = await res.json();
     document.getElementById("msg").innerText = result.message;
+
+    loadAdminChallenges();
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------
@@ -199,10 +211,46 @@ function loadUser(){
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------
+
+async function loadSolvedCount(){
+    const token = localStorage.getItem("token");
+
+    const res = await fetch(`${API}/solved`, {
+        headers: {"Authorization": `Bearer ${token}`}
+    });
+
+    const data = await res.json();
+    
+    document.getElementById("username-display").innerText +=
+    `| Solved: ${data.solved.length}`;
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------
+
+async function updateProgress(){
+    const token = localStorage.getItem("token");
+
+    const solvedRes = await fetch(`${API}/solved`, {
+        headers: {"Authorization": `Bearer ${token}`}
+    });
+
+    const challengesRes = await fetch(`${API}/challenges`, {
+        headers: {"Authorization": `Bearer ${token}`}
+    });
+
+    const solved = (await solvedRes.json()).solved.length;
+    const total = (await challengesRes.json()).length;
+    const percent = total ? (solved / total) * 100 : 0;
+
+    document.getElementById("progress-fill").style.width = percent + "%"
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------
 if(window.location.pathname.includes("dashboard.html")){
     loadChallenges();
     loadUser();
-    shwoChallenges();
+    loadSolvedCount();
+    updateProgress();
 }
 
 if(window.location.pathname.includes("admin.html")){

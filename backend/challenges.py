@@ -65,6 +65,7 @@ def scoreboard(user: str = Depends(get_current_user)):
         SELECT user, SUM(challenges.points)
         FROM submissions
         JOIN challenges ON submissions.challenge_id = challenges.id
+        WHERE user != 'admin'
         GROUP BY user
         ORDER BY SUM(challenges.points) DESC
     """)
