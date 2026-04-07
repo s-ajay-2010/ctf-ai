@@ -5,6 +5,20 @@
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
+        <input id="search" placeholder="Search challenges!!" oninput="loadChallenges()">
+        <select id="category-filter" onchange="loadChallenges()">
+            <option value="">All Categories</option>
+            <option value="Web">Web</option>
+            <option value="Crypto">Crypto</option>
+        </select>
+
+        <select id="difficulty-filter" onchange="loadChallenges()">
+            <option value="">All Difficulty</option>
+            <option value="Easy">Easy</option>
+            <option value="Medium">Medium</option>
+            <option value="Hard">Medium</option>
+        </select>
+
         <div class="layout">
             <aside class="sidebar">
                 <h2>CTF</h2>

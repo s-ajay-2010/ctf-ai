@@ -109,10 +109,23 @@ async function loadChallenges(){
     });
 
     const data = await res.json();
+
+    const category = document.getElementById("category-filter")?.value || "";
+    const difficulty = document.getElementById("difficulty-filter")?.value || "";
+
+    let filtered = data;
+
+    if(category){
+        filtered = filtered.filter(c => c.category === category);
+    }
+    if(difficulty){
+        filtered = filtered.filter(c => c.difficulty === difficulty);
+    }
+
     const container = document.getElementById("challenges");
     container.innerHTML = "";
 
-    data.forEach(c=> {
+    filtered.forEach(c=> {
         const disabled = c.solved ? "disabled" : "";
         const opacity = c.solved ? "0.5" : "1";
 
@@ -130,6 +143,8 @@ async function loadChallenges(){
          </div>
         `;
     });
+    
+    updateProgress();
 }
 
 //----------------------------------------------------------------------------------------------------------------------------
@@ -144,7 +159,9 @@ async function createChallenge(){
         points: parseInt(document.getElementById("points").value),
         category: document.getElementById("category").value,
         difficulty: document.getElementById("difficulty").value,
-        hints: document.getElementById("hints").value.split(",")
+        hints: document.getElementById("hints").value
+         .split(",")
+         .map(h => h.trim())
     };
 
     const res= await fetch(`${API}/admin/create`, {
@@ -179,12 +196,22 @@ async function loadAdminChallenges(){
 
     data.forEach(c =>{
         container.innerHTML += `
-        <div>
-            <b>${c.title}</b> (${c.points} pts)
-            <button onclick="deleteChallenge(${c.id})">Delete</button>
-        </div>
+       <div class="card">
+        <h4>${c.title}</h4>
+        <p>${c.category} | ${c.difficulty}</p>
+        <p>${c.points} pts</p>
+        <button onclick="deleteChallenge(${c.id})">DELETE</button>
+       </div>
         `;
     });
+
+    const search = document.getElementById("search")?.valuetoLowerCase() || "";
+    if(search){
+        filtered = filtered.filter(c => 
+            c.title.toLowerCase().includes(search) ||
+            c.description.toLowerCase().includes(search)
+        );
+    }
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------
