@@ -139,3 +139,15 @@ input {
 .toast.show {
     opacity: 1;
 }
+
+
+
+.card.solved {
+    animation: pop 0.3s ease;
+}
+
+@keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}

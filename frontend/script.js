@@ -31,6 +31,11 @@ async function login(){
 async function submitFlag(id) {
     const token = localStorage.getItem("token");
     const flag = document.getElementById(`flag-${id}`).value;
+    
+    if(!flag){
+        showToast("Enter a flag bruh(-_-)");
+        return;
+    }
 
     const res = await fetch(`${API}/submit`,{
         method: "POST",
@@ -46,7 +51,20 @@ async function submitFlag(id) {
 
     const data = await res.json();
     showToast(data.message);
-    loadChallenges();
+    
+    if(data.message.includes("Correct")){
+        const card = document.getElementById(`flag-${id}`).closest(".card");
+
+        card.style.opacity = "0.5";
+        card.style.pointerEvents = "none";
+
+        card.querySelector("input").disabled = true;
+        card.querySelectorAll("button").forEach(btn => btn.disabled = true);
+
+        if(!card.querySelector(".solved-badge")){
+            card.innerHTML += "<p class='solved-badge' style='color: #22c55e;'>Solved</p>";
+        }
+    }
 }
 
 
@@ -147,12 +165,13 @@ async function loadChallenges(){
                       "#ef4444";
 
         container.innerHTML += `
-         <div class="card" style="opacity:${opacity}">
+         <div class="card" style="opacity:${opacity}; pointer-events:${c.solved ? "none" : "auto"}">
              <h3>${c.title} (${c.points} pts)</h3>
              <p>${c.description}</p>
              <p style="color:${color}">${c.difficulty}</p>
              <p>Status: ${c.solved ? "Solved:) !!!" : "Not solved bruh (-_-)"}</p>
-             <input id="flag-${c.id}" placeholder="Enter Flag" ${disabled}>
+             ${c.solved ? "<span style='color: #22c55e; font-weight:bold;'>Completed</span>": ""}
+             <input id="flag-${c.id}" placeholder="Enter Flag" onkeydown="if(event.key==='Enter'){submitFlag(${c.id})}" ${disabled}>
              <button onclick="submitFlag(${c.id})" ${disabled}>Submit</button>
              <button onclick="getHints(${c.id})" ${disabled}>Hints</button>
              <div id="hints-${c.id}" style="margin-top:10px; color:#94a3b8;"></div>
@@ -227,7 +246,7 @@ async function loadAdminChallenges(){
 //-----------------------------------------------------------------------------------------------------------------------------
 
 async function deleteChallenge(id){
-    if(!confirm("Are you sure you want to do this challenge??")){
+    if(!confirm("Are you sure you want to delete this challenge??")){
         return;
     }
 
