@@ -118,3 +118,24 @@ input {
     width: 0%;
     border-radius: 10px;
 }
+
+
+
+
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #1e293b;
+    color: #e2e8f0;
+    padding: 12px 18px;
+    border-radius: 8px;
+    border-left: 4px solid #38bdf8;
+    opacity: 0;
+    transition: 0.3s;
+    pointer-events: none;
+}
+
+.toast.show {
+    opacity: 1;
+}

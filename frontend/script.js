@@ -45,7 +45,7 @@ async function submitFlag(id) {
     });
 
     const data = await res.json();
-    document.getElementById(`result-${id}`).innerText = data.message;
+    showToast(data.message);
     loadChallenges();
 }
 
@@ -115,6 +115,14 @@ async function loadChallenges(){
 
     let filtered = data;
 
+    const search = document.getElementById("search")?.value.toLowerCase() || "";
+    if(search){
+        filtered = filtered.filter(c => 
+            c.title.toLowerCase().includes(search) ||
+            c.description.toLowerCase().includes(search)
+        );
+    }
+
     if(category){
         filtered = filtered.filter(c => c.category === category);
     }
@@ -125,14 +133,24 @@ async function loadChallenges(){
     const container = document.getElementById("challenges");
     container.innerHTML = "";
 
+    if(filtered.length === 0){
+        container.innerHTML = "<p>NO Challenges Found(ToT)</p>";
+        return;
+    }
+
     filtered.forEach(c=> {
         const disabled = c.solved ? "disabled" : "";
         const opacity = c.solved ? "0.5" : "1";
+
+        const color = c.difficulty === "Easy" ? "#22c55e":
+                      c.difficulty === "Medium" ? "#facc15" :
+                      "#ef4444";
 
         container.innerHTML += `
          <div class="card" style="opacity:${opacity}">
              <h3>${c.title} (${c.points} pts)</h3>
              <p>${c.description}</p>
+             <p style="color:${color}">${c.difficulty}</p>
              <p>Status: ${c.solved ? "Solved:) !!!" : "Not solved bruh (-_-)"}</p>
              <input id="flag-${c.id}" placeholder="Enter Flag" ${disabled}>
              <button onclick="submitFlag(${c.id})" ${disabled}>Submit</button>
@@ -204,26 +222,20 @@ async function loadAdminChallenges(){
        </div>
         `;
     });
-
-    const search = document.getElementById("search")?.valuetoLowerCase() || "";
-    if(search){
-        filtered = filtered.filter(c => 
-            c.title.toLowerCase().includes(search) ||
-            c.description.toLowerCase().includes(search)
-        );
-    }
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------
 
 async function deleteChallenge(id){
+    if(!confirm("Are you sure you want to this challenge??")){
+        return;
+    }
+
     const token = localStorage.getItem("token");
 
     await fetch(`${API}/admin/delete/${id}`, {
         method: "DELETE",
-        headers:{
-            "Authorization": `Bearer ${token}`
-        }
+        headers: {"Authorization": `Bearer ${token}`}
     });
 
     loadAdminChallenges();
@@ -270,6 +282,25 @@ async function updateProgress(){
     const percent = total ? (solved / total) * 100 : 0;
 
     document.getElementById("progress-fill").style.width = percent + "%"
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------
+
+function showToast(msg){
+    const toast = document.getElementById("toast");
+    toast.innerText = msg;
+    toast.classList.add("show");
+
+    setTimeout(() => {
+        toast.classList.remove("show");
+    },2000);
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------
+
+function logout(){
+    localStorage.removeItem("token");
+    window.location.href = "login.html";
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------
