@@ -197,6 +197,8 @@ def admin_get_challenges(user: str = Depends(get_current_user)):
         {
             "id": r[0],
             "title": r[1],
+            "description": r[2],
+            "flag": r[3],
             "points": r[4],
             "category": r[5],
             "difficulty": r[6]

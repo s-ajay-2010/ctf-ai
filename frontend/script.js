@@ -1,5 +1,7 @@
 const API = "http://127.0.0.1:8000";
 
+function safe(str){ return String(str).replace(/'/g, "\\'")}
+
 async function login(){
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
@@ -99,6 +101,11 @@ async function loadScoreboard(){
     const container = document.getElementById("scoreboard");
     container.innerHTML = "";
 
+    if(data.length === 0){
+        container.innerHTML = "<p>No scores yet:( </p>";
+        return;
+    }
+
     const currentUser = JSON.parse(atob(token.split(".")[1])).sub;
 
     let rank =1;
@@ -109,8 +116,14 @@ async function loadScoreboard(){
         }
         const highlight = u.user === currentUser ? "style='color: #38bdf8'" : "";
 
+        let medal = "";
+
+        if(rank === 1) medal ="🥇";
+        else if(rank === 2) medal = "🥈";
+        else if(rank === 3) medal = "🥉";
+
         container.innerHTML += `
-        <p ${highlight}>#${rank} ${u.user}: ${u.score}</p>
+        <p ${highlight}>${medal} #${rank} ${u.user}: ${u.score}</p>
         `;
     });
 }
@@ -237,6 +250,7 @@ async function loadAdminChallenges(){
         <h4>${c.title}</h4>
         <p>${c.category} | ${c.difficulty}</p>
         <p>${c.points} pts</p>
+        <button onclick="editChallenge(${c.id}, '${safe(c.title)}', '${safe(c.description)}', '${safe(c.flag)}', ${c.points}, '${c.category}', '${c.difficulty}')>EDIT</button>
         <button onclick="deleteChallenge(${c.id})">DELETE</button>
        </div>
         `;
