@@ -2,7 +2,8 @@ dotenv
 python-dotenv
 fastapi
 pydantic
-jose
+python-jose
 datetime
 passlib[bcrypt]
+uvicorn
 # os

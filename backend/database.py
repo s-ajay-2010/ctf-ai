@@ -1,9 +1,11 @@
 import sqlite3
 
 conn = sqlite3.connect("ctf.db", check_same_thread=False)
-cursor = conn.cursor()
+def get_cursor():
+    return conn.cursor()
 
 def init_db():
+    cursor = get_cursor()
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,

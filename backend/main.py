@@ -10,9 +10,8 @@ from jose.exceptions import JWTError
 from datetime import datetime, timedelta, timezone
 from challenges import router as challenge_router
 from deps import get_current_user
-from models import users, login_attempts
 from fastapi.middleware.cors import CORSMiddleware
-from database import init_db, cursor, conn
+from database import init_db, get_cursor, conn
 
 init_db()
 
@@ -44,10 +43,10 @@ class User(bm):
 
 def hash_password(password: str):
     # print("Length:", len(password))
-    return pwd_context.hash(password[:72])
+    return pwd_context.hash(password)
 
 def verify_password(plain, hashed):
-    return pwd_context.verify(plain[:72], hashed)
+    return pwd_context.verify(plain, hashed)
 
 
 
@@ -59,6 +58,7 @@ def home():
 
 @app.post("/register")
 def register(user: User):
+    cursor = get_cursor()
     cursor.execute("SELECT * FROM users WHERE username=?", (user.username,))
     if cursor.fetchone():
         raise HTTPException(status_code=400, detail="User exists")
@@ -74,6 +74,7 @@ def register(user: User):
 
 @app.post("/login")
 def login(user: User):
+    cursor = get_cursor()
     cursor.execute("SELECT * FROM users WHERE username=?", (user.username, ))
     db_user = cursor.fetchone()
 
@@ -107,6 +108,7 @@ app.include_router(challenge_router)
 
 @app.get("/solves")
 def get_solves():
+    cursor = get_cursor()
     cursor.execute("SELECT user, challenge_id FROM submissions")
     rows = cursor.fetchall()
 

@@ -4,13 +4,13 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import jwt
 from jose.exceptions import JWTError
 import os
-from models import users
-from database import cursor
+from database import get_cursor
 
 load_dotenv()
 security = HTTPBearer()
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
+
 
 def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
     token = credentials.credentials
@@ -21,6 +21,7 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
         if user is None:
             raise HTTPException(status_code=401, detail="Invalid token")
         
+        cursor = get_cursor()
         cursor.execute("SELECT username FROM users WHERE username=?", (user, ))
         db_user = cursor.fetchone()
 

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel as bm
-from deps import get_current_user, get_db
-from database import cursor, conn
+from deps import get_current_user
+from database import get_cursor, conn
 
 
 
@@ -15,6 +15,7 @@ class FlagSubmission(bm):
 
 @router.get("/challenges")
 def get_challenges(user: str = Depends(get_current_user)):
+    cursor = get_cursor()
     cursor.execute("SELECT * FROM challenges")
     challenges = cursor.fetchall()
 
@@ -37,6 +38,7 @@ def get_challenges(user: str = Depends(get_current_user)):
 
 @router.post("/submit")
 def submit_flag(data: FlagSubmission, user: str = Depends(get_current_user)):
+    cursor = get_cursor()
     cursor.execute("SELECT flag FROM challenges WHERE id=?", (data.challenge_id,))
     row = cursor.fetchone()
 
@@ -65,6 +67,7 @@ def submit_flag(data: FlagSubmission, user: str = Depends(get_current_user)):
 
 @router.get("/scoreboard")
 def scoreboard(user: str = Depends(get_current_user)):
+    cursor = get_cursor()
     cursor.execute("""
         SELECT user, SUM(challenges.points)
         FROM submissions
@@ -79,6 +82,7 @@ def scoreboard(user: str = Depends(get_current_user)):
 
 @router.get("/hints/{challenge_id}")
 def get_hints(challenge_id: int, user: str = Depends(get_current_user)):
+   cursor = get_cursor()
    cursor.execute(
        "SELECT hint FROM hints WHERE challenge_id=?",
        (challenge_id,)
@@ -93,6 +97,7 @@ def get_hints(challenge_id: int, user: str = Depends(get_current_user)):
 
 @router.get("/solved")
 def get_solved(user: str = Depends(get_current_user)):
+    cursor = get_cursor()
     cursor.execute(
         "SELECT challenge_id FROM submissions WHERE user=?",
         (user,)
@@ -116,6 +121,7 @@ def is_admin(user: str):
 
 @router.post("/admin/create")
 def create_challenge(data: ChallengeCreate, user: str = Depends(get_current_user)):
+    cursor = get_cursor()
     if user != "admin":
         raise HTTPException(status_code=403, detail="Admins only")
     cursor.execute("""
@@ -144,6 +150,7 @@ def create_challenge(data: ChallengeCreate, user: str = Depends(get_current_user
 
 @router.delete("/admin/delete/{challenge_id}")
 def delete_challenge(challenge_id: int, user: str = Depends(get_current_user)):
+    cursor = get_cursor()
     if user != "admin":
         raise HTTPException(status_code=403, detail="Admins only")
     
@@ -159,6 +166,7 @@ def delete_challenge(challenge_id: int, user: str = Depends(get_current_user)):
 
 @router.put("/admin/edit/{challenge_id}")
 def edit_challenge(challenge_id: int, data: ChallengeCreate, user: str = Depends(get_current_user)):
+    cursor = get_cursor()
     if user != "admin":
         raise HTTPException(status_code=403, detail="Admins only")
     
@@ -191,6 +199,7 @@ def edit_challenge(challenge_id: int, data: ChallengeCreate, user: str = Depends
 
 @router.get("/admin/challenges")
 def admin_get_challenges(user: str = Depends(get_current_user)):
+    cursor = get_cursor()
     if user != "admin":
         raise HTTPException(status_code=403, detail="Admins only")
     
