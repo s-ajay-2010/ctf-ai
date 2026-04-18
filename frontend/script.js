@@ -109,7 +109,7 @@ async function loadScoreboard(){
     const currentUser = JSON.parse(atob(token.split(".")[1])).sub;
 
     let rank =1;
-    let rank=null;
+    let userRank=null;
 
     data.forEach((u, index) => {
         if(index > 0 && u.score < data[index - 1].score){
@@ -135,7 +135,7 @@ async function loadScoreboard(){
     if(userRank !== null){
         container.innerHTML += `
         <p style="margin-top:15px; color:#22c55e;">
-            You are ranked #$
+            You are ranked #${userRank}
         </p>        
         `;
     }
@@ -350,11 +350,28 @@ function logout(){
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------
+
+async function loadActivity(){
+    const res = await fetch("/solves");
+    const data = await res.json();
+
+    const container = document.getElementById("activity");
+    container.innerHTML = "";
+
+    data.slice(-5).reverse().forEach(s => {
+        container.innerHTML += `
+        <p> ${s.user} solved channge #${s.challenge_id}</p>
+        `;
+    });
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------
 if(window.location.pathname.includes("dashboard.html")){
     loadChallenges();
     loadUser();
     loadSolvedCount();
     updateProgress();
+    loadActivity();
 }
 
 if(window.location.pathname.includes("admin.html")){

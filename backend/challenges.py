@@ -1,7 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel as bm
-from deps import get_current_user
+from deps import get_current_user, get_db
 from database import cursor, conn
+
+
+
 
 router = APIRouter()
 
@@ -54,6 +57,7 @@ def submit_flag(data: FlagSubmission, user: str = Depends(get_current_user)):
             (user, data.challenge_id)
         )
         conn.commit()
+
         return {"message": "Correct flag!!!!"}
     return {"message": "Wrong Flag:("}
     
@@ -205,3 +209,5 @@ def admin_get_challenges(user: str = Depends(get_current_user)):
         }
         for r in rows
     ]
+
+

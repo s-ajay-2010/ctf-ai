@@ -39,7 +39,6 @@ def init_db():
             challenge_id INTEGER,
             hint TEXT
         )
- """)
-    
-    
+    """)
+
     conn.commit()

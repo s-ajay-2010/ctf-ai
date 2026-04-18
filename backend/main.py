@@ -103,3 +103,11 @@ def protected(user: str = Depends(get_current_user)):
 
 
 app.include_router(challenge_router)
+
+
+@app.get("/solves")
+def get_solves():
+    cursor.execute("SELECT user, challenge_id FROM submissions")
+    rows = cursor.fetchall()
+
+    return [{"user": r[0], "challenge_id": r[1]} for r in rows]
