@@ -109,10 +109,15 @@ async function loadScoreboard(){
     const currentUser = JSON.parse(atob(token.split(".")[1])).sub;
 
     let rank =1;
+    let rank=null;
 
     data.forEach((u, index) => {
         if(index > 0 && u.score < data[index - 1].score){
             rank = index + 1;
+        }
+
+        if(u.user === currentUser){
+            userRank = rank;
         }
         const highlight = u.user === currentUser ? "style='color: #38bdf8'" : "";
 
@@ -126,6 +131,14 @@ async function loadScoreboard(){
         <p ${highlight}>${medal} #${rank} ${u.user}: ${u.score}</p>
         `;
     });
+
+    if(userRank !== null){
+        container.innerHTML += `
+        <p style="margin-top:15px; color:#22c55e;">
+            You are ranked #$
+        </p>        
+        `;
+    }
 }
 
 //----------------------------------------------------------------------------------------------------------------------------
