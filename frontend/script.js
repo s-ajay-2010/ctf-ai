@@ -215,6 +215,10 @@ async function loadChallenges(){
 async function createChallenge(){
     const token = localStorage.getItem("token");
 
+    const hintsInput = document.getElementById("hints").value;
+
+    const hints = hintsInput ? hintsInput.split(",").map(h => h.trim()).filter(h => h) : [];
+
     const data = {
         title: document.getElementById("title").value,
         description: document.getElementById("desc").value,
@@ -222,9 +226,7 @@ async function createChallenge(){
         points: parseInt(document.getElementById("points").value),
         category: document.getElementById("category").value,
         difficulty: document.getElementById("difficulty").value,
-        hints: document.getElementById("hints").value
-         .split(",")
-         .map(h => h.trim())
+        hints: hints
     };
 
     const res= await fetch(`${API}/admin/create`, {
@@ -263,7 +265,7 @@ async function loadAdminChallenges(){
         <h4>${c.title}</h4>
         <p>${c.category} | ${c.difficulty}</p>
         <p>${c.points} pts</p>
-        <button onclick="editChallenge(${c.id}, '${safe(c.title)}', '${safe(c.description)}', '${safe(c.flag)}', ${c.points}, '${c.category}', '${c.difficulty}')>EDIT</button>
+        <button onclick="editChallenge(${c.id}, '${safe(c.title)}', '${safe(c.description)}', '${safe(c.flag)}', ${c.points}, '${c.category}', '${c.difficulty}')">EDIT</button>
         <button onclick="deleteChallenge(${c.id})">DELETE</button>
        </div>
         `;
@@ -325,7 +327,7 @@ async function updateProgress(){
 
     const solved = (await solvedRes.json()).solved.length;
     const total = (await challengesRes.json()).length;
-    const percent = total ? (solved / total) * 100 : 0;
+    const percent = total ? Math.min((solved / total) * 100, 100) : 0;
 
     document.getElementById("progress-fill").style.width = percent + "%"
 }
@@ -352,7 +354,7 @@ function logout(){
 //-----------------------------------------------------------------------------------------------------------------------------
 
 async function loadActivity(){
-    const res = await fetch("/solves");
+    const res = await fetch(`${API}/solves`);
     const data = await res.json();
 
     const container = document.getElementById("activity");
@@ -360,9 +362,77 @@ async function loadActivity(){
 
     data.slice(-5).reverse().forEach(s => {
         container.innerHTML += `
-        <p> ${s.user} solved channge #${s.challenge_id}</p>
+        <p> ${s.user} solved challenge #${s.challenge_id}</p>
         `;
     });
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------
+
+function editChallenge(id, title, description, flag, points, category, difficulty){
+    const newTitle = prompt("Title:", title) || title;
+    const newDesc = prompt("Description:", description) || description;
+    const newFlag = prompt("Flag:", flag) || flag;
+    const newPoints = prompt("Points:", points) || points;
+    const hintsInput = prompt("Hints (comma seperated):", "");
+    let hints = [];
+    if (hintsInput && hintsInput.trim() !== ""){
+        hints = hintsInput.split(",").map(h => h.trim()).filter(h => h.length > 0);
+    }
+    
+
+    fetch(`http://127.0.0.1:8000/admin/edit/${id}`,{
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + localStorage.getItem("token")
+        },
+        body: JSON.stringify({
+            title: newTitle,
+            description: newDesc,
+            flag: newFlag,
+            points: parseInt(newPoints),
+            category,
+            difficulty,
+            hints: hints
+        })
+    })
+    .then(res => {
+        if (!res.ok){
+            console.log("FAILED STATUS:", res.status);
+        }
+        return res.json();
+    })
+    .then(data => {
+        console.log("SERVER RESPONSE:", data);
+        alert(data.message || data.detail);
+        location.reload();
+    });
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------
+
+function signup(){
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    fetch("http://127.0.0.1:8000/register", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ username, password})
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("msg").innerText = data.msg || data.detail;
+        if(data.msg){
+            setTimeout(() => {
+                window.location.href= "login.html";
+            }, 1000);
+        }
+    });
+    
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------

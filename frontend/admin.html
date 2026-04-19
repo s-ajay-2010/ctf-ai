@@ -3,6 +3,7 @@
     <head>
        <title>Admin Panel</title>
        <link rel="stylesheet" href="style.css">
+       <meta charset="UTF-8">
     </head>
     <body>
         <h2>Admin Panel</h2>
@@ -15,7 +16,7 @@
         <input id="points" placeholder="Points"><br><br>
         <input id="category" placeholder="Category"><br><br>
         <input id="difficulty" placeholder="Difficulty"><br><br>
-        <input id="hints" placeholder="Hints(comma seperated)"><br><br>
+        <input id="hints" placeholder="Hints(comma separated)"><br><br>
 
         <button onclick="createChallenge()">Create</button>
 
@@ -25,5 +26,6 @@
 
         <h3>Existing Challenges</h3>
         <div id="admin-challenges"></div>
+        <button onclick="logout()">Logout</button>
     </body>
 </html>
