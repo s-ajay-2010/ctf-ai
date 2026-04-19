@@ -2,15 +2,19 @@
 <html>
     <head>
         <title>Login</title>
+        <link rel="stylesheet" href="style.css">
         <meta charset="UTF-8">
     </head>
     <body>
-        <link rel="stylesheet" href="style.css">
-        <h2>Login</h2>
-        <input id="username" placeholder="Username"><br><br>
-        <input id="password" type="password" placeholder="Password"><br><br>
-        <button onclick="login()">Login</button>
-        <p id="msg"></p>
+        <div class="auth-container">
+            <div class="auth-card">
+                <h2>Login</h2>
+                <input id="username" placeholder="Username"><br><br>
+                <input id="password" type="password" placeholder="Password"><br><br>
+                <button onclick="login()">Login</button>
+                <p id="msg"></p>
+            </div>
+        </div>
         <script src="script.js"></script>
     </body>
 </html>

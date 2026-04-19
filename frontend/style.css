@@ -151,3 +151,48 @@ input {
     50% { transform: scale(1.05); }
     100% { transform: scale(1); }
 }
+
+
+.auth-container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #0f172a, #020617);
+}
+
+.auth-card {
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 30px;
+    width: 320px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    text-align: center;
+    border: 1px solid #334155;
+}
+
+.auth-card input {
+    background: #020617;
+    color: #e2e8f0;
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #334155;
+    border-radius: 6px;
+}
+
+.auth-card button {
+    width: 100%;
+    padding: 10px;
+    background: #38bdf8;
+    border: none;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.auth-card button:hover {
+    background: #0ea5e9;
+}
