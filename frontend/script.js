@@ -334,9 +334,17 @@ async function updateProgress(){
 
 //-----------------------------------------------------------------------------------------------------------------------------
 
-function showToast(msg){
+function showToast(msg, type ="success"){
     const toast = document.getElementById("toast");
     toast.innerText = msg;
+
+    if(type === "error"){
+        toast.style.borderLeft = "4px solid #ef4444";
+    }
+    else{
+        toast.style.borderLeft = "4px solid #22c55e"
+    }
+
     toast.classList.add("show");
 
     setTimeout(() => {
@@ -425,14 +433,39 @@ function signup(){
     })
     .then(res => res.json())
     .then(data => {
-        document.getElementById("msg").innerText = data.msg || data.detail;
-        if(data.msg){
+        const msg = document.getElementById("msg");
+         
+        if (data.msg){
+            masg.style.color = "#22c55e";
+            msg.innerText = data.msg;
+
+            showToast("Sign-up successful", "success");
+
             setTimeout(() => {
-                window.location.href= "login.html";
+                window.location.href = "login.html";
             }, 1000);
+        }
+        else {
+            msg.style.color = "#ef4444";
+            msg.innerHTML = `${data.detail} - <a href="login.html" style="color:#38bdf8">Login</a>`
+
+            showToast(data.detail, "error")
         }
     });
     
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------
+
+function togglePassword(){
+    const input = document.getElementById("password");
+
+    if(input.type === "password"){
+        input.type = "text";
+    }
+    else{
+        input.type = "password";
+    }
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------

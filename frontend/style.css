@@ -196,3 +196,29 @@ input {
 .auth-card button:hover {
     background: #0ea5e9;
 }
+
+.password-box {
+    position: relative;
+    width: 100%;
+}
+
+.password-box input {
+    width: 100%;
+    padding-right: 12px 45px 12px 12px;
+    border-radius: 6px;
+}
+
+.eye {
+    position: absolute;
+    right: -7px;
+    top: 50%;
+    transform: translateY(-62%);
+    cursor: pointer;
+    font-size: 16px;
+    color: #94a3b8;
+    user-select: none;
+}
+
+.eye:hover {
+    color: #38bdf8
+}

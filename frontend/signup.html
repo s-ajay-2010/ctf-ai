@@ -10,9 +10,13 @@
             <div class="auth-card">
                 <h2>Sign-Up</h2>
                 <input id="username" placeholder="Username"><br><br>
-                <input id="password" placeholder="Password"><br><br>
+                <div class="password-box">
+                    <input id="password" type="password" placeholder="Password">
+                    <span onclick="togglePassword()" class="eye">eye</span>
+                </div>
                 <button onclick="signup()">Register</button>
                 <p id="msg"></p>
+                <div id="toast" class="toast"></div>
             </div>
         </div>
         <script src="script.js"></script>
