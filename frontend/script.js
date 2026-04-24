@@ -325,6 +325,8 @@ async function updateProgress(){
         headers: {"Authorization": `Bearer ${token}`}
     });
 
+    // const flag = flag{inspect_supremacy};
+
     const solved = (await solvedRes.json()).solved.length;
     const total = (await challengesRes.json()).length;
     const percent = total ? Math.min((solved / total) * 100, 100) : 0;
@@ -436,7 +438,7 @@ function signup(){
         const msg = document.getElementById("msg");
          
         if (data.msg){
-            masg.style.color = "#22c55e";
+            msg.style.color = "#22c55e";
             msg.innerText = data.msg;
 
             showToast("Sign-up successful", "success");
@@ -459,12 +461,16 @@ function signup(){
 
 function togglePassword(){
     const input = document.getElementById("password");
+    const icon = document.getElementById("eyeIcon");
+    
 
     if(input.type === "password"){
         input.type = "text";
+        icon.src = "assets/eye-open.png";
     }
     else{
         input.type = "password";
+        icon.src = "assets/eye-closed.png";
     }
 }
 
