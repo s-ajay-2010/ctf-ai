@@ -72,7 +72,8 @@ def scoreboard(user: str = Depends(get_current_user)):
         SELECT user, SUM(challenges.points)
         FROM submissions
         JOIN challenges ON submissions.challenge_id = challenges.id
-        WHERE user != 'admin'
+        JOIN users ON submissions.user = users.username
+        WHERE users.role != 'admin'
         GROUP BY user
         ORDER BY SUM(challenges.points) DESC
     """)
@@ -117,12 +118,15 @@ class ChallengeCreate(bm):
     hints: list[str]
 
 def is_admin(user: str):
-    return user == "admin"
+    cursor = get_cursor()
+    cursor.execute("SELECT role FROM users WHERE username=?", (user,))
+    row = cursor.fetchone()
+    return row and row[0] == "admin"
 
 @router.post("/admin/create")
 def create_challenge(data: ChallengeCreate, user: str = Depends(get_current_user)):
     cursor = get_cursor()
-    if user != "admin":
+    if not is_admin(user):
         raise HTTPException(status_code=403, detail="Admins only")
     cursor.execute("""
         INSERT INTO challenges (title, description, flag, points, category, difficulty)
@@ -151,7 +155,7 @@ def create_challenge(data: ChallengeCreate, user: str = Depends(get_current_user
 @router.delete("/admin/delete/{challenge_id}")
 def delete_challenge(challenge_id: int, user: str = Depends(get_current_user)):
     cursor = get_cursor()
-    if user != "admin":
+    if not is_admin(user):
         raise HTTPException(status_code=403, detail="Admins only")
     
     cursor.execute("DELETE FROM challenges WHERE id=?", (challenge_id, ))
@@ -167,7 +171,7 @@ def delete_challenge(challenge_id: int, user: str = Depends(get_current_user)):
 @router.put("/admin/edit/{challenge_id}")
 def edit_challenge(challenge_id: int, data: ChallengeCreate, user: str = Depends(get_current_user)):
     cursor = get_cursor()
-    if user != "admin":
+    if not is_admin(user):
         raise HTTPException(status_code=403, detail="Admins only")
     
     cursor.execute("""
@@ -200,7 +204,7 @@ def edit_challenge(challenge_id: int, data: ChallengeCreate, user: str = Depends
 @router.get("/admin/challenges")
 def admin_get_challenges(user: str = Depends(get_current_user)):
     cursor = get_cursor()
-    if user != "admin":
+    if not is_admin(user):
         raise HTTPException(status_code=403, detail="Admins only")
     
     cursor.execute("SELECT * FROM challenges")

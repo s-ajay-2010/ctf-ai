@@ -80,9 +80,11 @@ def login(user: User):
 
     if db_user and verify_password(user.password, db_user[2]):
         token = create_token({"sub": user.username})
+        cursor.execute("SELECT role FROM users WHERE username=?", (user.username,))
+        role = cursor.fetchone()[0]
         return {
             "access_token": token,
-            "is_admin": user.username == "admin"
+            "is_admin": role == "admin"
             }
 
     raise HTTPException(status_code=401, detail="Invalid username or password.")
