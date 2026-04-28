@@ -1,6 +1,14 @@
 const API = "http://127.0.0.1:8000";
 
-function safe(str){ return String(str).replace(/'/g, "\\'")}
+function safe(str){
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;")
+    
+}
 
 async function login(){
     const username = document.getElementById("username").value;
@@ -55,6 +63,7 @@ async function submitFlag(id) {
     showToast(data.message);
     
     if(data.message.includes("Correct")){
+        showToast("🩸 FIRST BLOOD!", "success")
         const card = document.getElementById(`flag-${id}`).closest(".card");
 
         card.style.opacity = "0.5";
@@ -182,7 +191,7 @@ async function loadChallenges(){
         return;
     }
 
-    filtered.forEach(c=> {
+    filtered.forEach((c, index) => {
         const disabled = c.solved ? "disabled" : "";
         const opacity = c.solved ? "0.5" : "1";
 
@@ -192,9 +201,10 @@ async function loadChallenges(){
 
         container.innerHTML += `
          <div class="card" style="opacity:${opacity}; pointer-events:${c.solved ? "none" : "auto"}">
-             <h3>${c.title} (${c.points} pts)</h3>
+             <h3>#${index+1} ${c.title} (${c.points} pts)</h3>
              <p>${c.description}</p>
              <p style="color:${color}">${c.difficulty}</p>
+             ${c.first_solver ? `<p style="color: #ef4444;">🩸 First Blood: ${c.first_solver}</p>` : ""}
              <p>Status: ${c.solved ? "Solved:) !!!" : "Not solved bruh (-_-)"}</p>
              ${c.solved ? "<span style='color: #22c55e; font-weight:bold;'>Completed</span>": ""}
              <input id="flag-${c.id}" placeholder="Enter Flag" onkeydown="if(event.key==='Enter'){submitFlag(${c.id})}" ${disabled}>
@@ -309,7 +319,7 @@ async function loadSolvedCount(){
     const data = await res.json();
     
     document.getElementById("username-display").innerText +=
-    `| Solved: ${data.solved.length}`;
+    ` | Solved: ${data.solved.length}`;
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------
@@ -324,8 +334,6 @@ async function updateProgress(){
     const challengesRes = await fetch(`${API}/challenges`, {
         headers: {"Authorization": `Bearer ${token}`}
     });
-
-    // const flag = flag{inspect_supremacy};
 
     const solved = (await solvedRes.json()).solved.length;
     const total = (await challengesRes.json()).length;
@@ -365,14 +373,27 @@ function logout(){
 
 async function loadActivity(){
     const res = await fetch(`${API}/solves`);
-    const data = await res.json();
+    const solves = await res.json();
+
+    const token = localStorage.getItem("token");
+
+    const challengesRes = await fetch(`${API}/challenges`, {
+        headers: {"Authorization": `Bearer ${token}`}
+    });
+
+    const challenges = await challengesRes.json();
+
+    const map = {};
+    challenges.forEach(c => {
+        map[c.id] = c.title;
+    });
 
     const container = document.getElementById("activity");
     container.innerHTML = "";
 
-    data.slice(-5).reverse().forEach(s => {
+    solves.slice(-5).reverse().forEach(s => {
         container.innerHTML += `
-        <p> ${s.user} solved challenge #${s.challenge_id}</p>
+        <p> ${s.user} solved "${map[s.challenge_id] || "Unknown Challenge"}"</p>
         `;
     });
 }
@@ -383,6 +404,7 @@ function editChallenge(id, title, description, flag, points, category, difficult
     const newTitle = prompt("Title:", title) || title;
     const newDesc = prompt("Description:", description) || description;
     const newFlag = prompt("Flag:", flag) || flag;
+    const flag_for_user = "ZmxhZ3tiYXNlNjRfaXNfbm90X2VuY3J5cHRpb259";
     const newPoints = prompt("Points:", points) || points;
     const hintsInput = prompt("Hints (comma seperated):", "");
     let hints = [];
@@ -474,7 +496,24 @@ function togglePassword(){
     }
 }
 
+
 //-----------------------------------------------------------------------------------------------------------------------------
+
+function showChallenges(){
+    document.getElementById("challenges-section").style.display = "block";
+    document.getElementById("scoreboard-section").style.display = "none";
+    loadChallenges();
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------
+
+function showScoreboard(){
+    document.getElementById("challenges-section").style.display = "none";
+    document.getElementById("scoreboard-section").style.display = "block";
+    loadScoreboard(); 
+}
+
+//------------------------------------------------------------------------------------------------------------------------------
 if(window.location.pathname.includes("dashboard.html")){
     loadChallenges();
     loadUser();

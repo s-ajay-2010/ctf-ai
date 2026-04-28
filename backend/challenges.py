@@ -31,6 +31,8 @@ def get_challenges(user: str = Depends(get_current_user)):
             "points": c[4],
             "category": c[5],
             "difficulty": c[6],
+            "hidden_flag": c[7],
+            "first_solver": c[8],
             "solved": c[0] in solved_ids
         })
     
@@ -55,12 +57,31 @@ def submit_flag(data: FlagSubmission, user: str = Depends(get_current_user)):
     
     if data.flag == correct_flag:
         cursor.execute(
+            "SELECT * FROM submissions WHERE user=? AND challenge_id=?",
+            (user, data.challenge_id)
+        )
+        if cursor.fetchone():
+            return {"message": "Already Solved!!"}
+        
+        cursor.execute(
+            "SELECT first_solver FROM challenges WHERE id=?",
+            (data.challenge_id,)
+        )
+        first = cursor.fetchone()[0]
+
+        if first is None:
+            cursor.execute(
+                "UPDATE challenges SET first_solver=? WHERE id=?",
+                (user, data.challenge_id)
+            )
+        
+        cursor.execute(
             "INSERT INTO submissions (user, challenge_id) VALUES (?, ?)",
             (user, data.challenge_id)
         )
         conn.commit()
-
         return {"message": "Correct flag!!!!"}
+    
     return {"message": "Wrong Flag:("}
     
 

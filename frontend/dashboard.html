@@ -20,21 +20,32 @@
             <option value="Hard">Hard</option>
         </select>
 
+        <!-- #flag{why_are_you_here_??} -->
+
         <div class="layout">
             <aside class="sidebar">
                 <h2>CTF</h2>
-                <a onclick="loadChallenges()">Challenges</a>
-                <a onclick="loadScoreboard()">Scoreboard</a>
+                <a onclick="showChallenges()">Challenges</a>
+                <a onclick="showScoreboard()">Scoreboard</a>
             </aside>
 
             <main class="content">
-                <h2>Dashboard</h2>
-                <span id="username-display"></span>
-                <button onclick="logout()">Logout</button>
-                <div id="challenges"></div>
+                <div id="challenges-section">
+                    <h2>Dashboard</h2>
+                    <span id="username-display"></span>
+                    <button onclick="logout()">Logout</button>
+                    <div id="challenges"></div>
+                </div>
+                
+                <div id="scoreboard-section" style="display:none;">
+                    <h2>Scoreboard</h2>
+                    <div id="scoreboard"></div>
+                </div>
 
-                <h2>Scoreboard</h2>
-                <div id="scoreboard"></div>
+                <div id="activity-section">
+                    <h2>Recent Activity</h2>
+                    <div id="activity"></div>
+                </div>
             </main>
 
             <div class="progress-bar">
@@ -44,9 +55,6 @@
         </div>
         <script src="script.js"></script>
         <div id="toast" class="toast"></div>
-
-        <h2> Recent Activity</h2>
-        <div id="activity"></div>
     </body>
 </html>
 

@@ -23,7 +23,9 @@ def init_db():
             flag TEXT,
             points INTEGER,
             category TEXT,
-            difficulty TEXT
+            difficulty TEXT,
+            hidden_flag TEXT,
+            first_solver TEXT
         )
     """)
 
@@ -45,3 +47,5 @@ def init_db():
     """)
 
     conn.commit()
+
+

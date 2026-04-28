@@ -9,6 +9,7 @@ h2 {
     color: #38bdf8;
     border-bottom: 2px solid #38bdf8;
     padding-bottom: 5px;
+    margin-bottom: 15px;
 }
 
 #challenges div {
@@ -94,7 +95,7 @@ input {
     background: #1e293b;
     padding: 10px;
     border-radius: 8px;
-    margin-bottom: 5px;
+    margin-bottom: 25px;
 }
 
 .topbar {
