@@ -24,6 +24,14 @@ def get_challenges(user: str = Depends(get_current_user)):
 
     result = []
     for c in challenges:
+
+        cursor.execute(
+            "SELECT COUNT(*) FROM submissions WHERE challenge_id=?",
+            (c[0], )
+        )
+
+        solve_count = cursor.fetchone()[0]
+
         result.append({
             "id": c[0],
             "title": c[1],
@@ -33,6 +41,7 @@ def get_challenges(user: str = Depends(get_current_user)):
             "difficulty": c[6],
             "hidden_flag": c[7],
             "first_solver": c[8],
+            "solve_count": solve_count,
             "solved": c[0] in solved_ids
         })
     
