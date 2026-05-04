@@ -11,7 +11,8 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE,
             password TEXT,
-            role TEXT DEFAULT 'user'
+            role TEXT DEFAULT 'user',
+            points INTEGER DEFAULT 0
         )
     """)
     
@@ -41,6 +42,17 @@ def init_db():
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS hints (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            challenge_id INTEGER,
+            hint TEXT,
+            cost INTEGER DEFAULT 5
+        )
+    """)
+
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS hint_usage (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user TEXT,
             challenge_id INTEGER,
             hint TEXT
         )

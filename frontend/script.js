@@ -91,9 +91,15 @@ async function getHints(id){
 
     const data = await res.json();
     const container = document.getElementById(`hints-${id}`);
-    container.innerHTML = data.hints.map(h => `<p>Hint: ${h}</p>`).join("");
+    container.innerHTML = data.hints.map(h => `<p>
+        Hint(${h.cost} pts):
+        <span data-hint="${encodeURIComponent(h.hint)}" data-cost="${h.cost}" onclick="unlockHint(this)" style="cursor:pointer; color:#38bdf8;">
+           Click to unlock
+        </span>
+    </p>`).join("");
     
-    document.querySelector(`button[onclick="getHints(${id})"]`).style.display = "none";
+    const card = document.getElementById(`hints-${id}`).closest(".card");
+    card.querySelector(`button[onclick="getHints(${id})"]`).style.display = "none"
 }
 
 //----------------------------------------------------------------------------------------------------------------------------
@@ -168,6 +174,15 @@ async function loadChallenges(){
 
     let filtered = data;
 
+    const sort  = document.getElementById("sort-filter")?.value;
+
+    if(sort === "points"){
+        filtered.sort((a,b) => b.points - a.points);
+    }
+    else if(sort === "solves"){
+        filtered.sort((a,b) => b.solve_count - a.solve_count);
+    }
+
     const search = document.getElementById("search")?.value.toLowerCase() || "";
     if(search){
         filtered = filtered.filter(c => 
@@ -205,6 +220,7 @@ async function loadChallenges(){
              <p>${c.description}</p>
              <p style="color:${color}">${c.difficulty}</p>
              ${c.first_solver ? `<p style="color: #ef4444;">🩸 First Blood: ${c.first_solver}</p>` : ""}
+             <p style="color:#94a3b8;">Solved by: ${c.solve_count} ${c.solve_count === 1 ? "player" : "players"}</p>
              <p>Status: ${c.solved ? "Solved:) !!!" : "Not solved bruh (-_-)"}</p>
              ${c.solved ? "<span style='color: #22c55e; font-weight:bold;'>Completed</span>": ""}
              <input id="flag-${c.id}" placeholder="Enter Flag" onkeydown="if(event.key==='Enter'){submitFlag(${c.id})}" ${disabled}>
@@ -511,6 +527,39 @@ function showScoreboard(){
     document.getElementById("challenges-section").style.display = "none";
     document.getElementById("scoreboard-section").style.display = "block";
     loadScoreboard(); 
+}
+
+//------------------------------------------------------------------------------------------------------------------------------
+
+async function unlockHint(el){
+
+    const token = localStorage.getItem("token");
+
+    const hint = decodeURIComponent(el.dataset.hint);
+    const cost = parseInt(el.dataset.cost);
+    const id = el.closest(".card").querySelector("input").id.split("-")[1];
+
+    const res = await fetch(`${API}/use-hint`,{
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+            challenge_id: id,
+            hint: hint,
+            cost: cost
+        })
+    });
+
+    const data = await res.json();
+
+    if (res.ok){
+        el.innerText = hint;
+    }
+    else {
+        showToast(data.detail || "Hint failed", "error");
+    }
 }
 
 //------------------------------------------------------------------------------------------------------------------------------

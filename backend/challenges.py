@@ -50,12 +50,14 @@ def get_challenges(user: str = Depends(get_current_user)):
 @router.post("/submit")
 def submit_flag(data: FlagSubmission, user: str = Depends(get_current_user)):
     cursor = get_cursor()
-    cursor.execute("SELECT flag FROM challenges WHERE id=?", (data.challenge_id,))
+    cursor.execute("SELECT flag, points FROM challenges WHERE id=?", (data.challenge_id,))
     row = cursor.fetchone()
-
+    
     if not row:
         raise HTTPException(status_code=404, detail="Challenge not found")
+    
     correct_flag = row[0]
+    points = row[1]
 
     cursor.execute(
         "SELECT * FROM submissions WHERE user=? AND challenge_id=?",
@@ -88,6 +90,11 @@ def submit_flag(data: FlagSubmission, user: str = Depends(get_current_user)):
             "INSERT INTO submissions (user, challenge_id) VALUES (?, ?)",
             (user, data.challenge_id)
         )
+
+        cursor.execute(
+            "UPDATE users SET points = points + ? WHERE username=?",
+            (points, user)
+        )
         conn.commit()
         return {"message": "Correct flag!!!!"}
     
@@ -99,13 +106,9 @@ def submit_flag(data: FlagSubmission, user: str = Depends(get_current_user)):
 def scoreboard(user: str = Depends(get_current_user)):
     cursor = get_cursor()
     cursor.execute("""
-        SELECT user, SUM(challenges.points)
-        FROM submissions
-        JOIN challenges ON submissions.challenge_id = challenges.id
-        JOIN users ON submissions.user = users.username
-        WHERE users.role != 'admin'
-        GROUP BY user
-        ORDER BY SUM(challenges.points) DESC
+        SELECT username, points FROM users
+        WHERE role != 'admin'
+        ORDER BY points DESC
     """)
 
     rows = cursor.fetchall()
@@ -115,11 +118,11 @@ def scoreboard(user: str = Depends(get_current_user)):
 def get_hints(challenge_id: int, user: str = Depends(get_current_user)):
    cursor = get_cursor()
    cursor.execute(
-       "SELECT hint FROM hints WHERE challenge_id=?",
+       "SELECT hint, cost FROM hints WHERE challenge_id=?",
        (challenge_id,)
    )
 
-   hints = [row[0] for row in cursor.fetchall()]
+   hints = [{"hint": row[0], "cost": row[1]} for row in cursor.fetchall()]
 
    if not hints:
        raise HTTPException(status_code=404, detail="No hints found")
@@ -254,3 +257,36 @@ def admin_get_challenges(user: str = Depends(get_current_user)):
     ]
 
 
+@router.post("/use-hint")
+def use_hint(data: dict, user: str = Depends(get_current_user)):
+    cursor = get_cursor()
+
+    challenge_id = data["challenge_id"]
+    hint = data["hint"]
+    cost = data["cost"]
+
+    cursor.execute(
+        "SELECT * FROM hint_usage WHERE user=? AND challenge_id=? AND hint=?",
+        (user, challenge_id, hint)
+    )
+    if cursor.fetchone():
+        return {"message": "Already used"}
+    
+    cursor.execute(
+        "INSERT INTO hint_usage (user, challenge_id, hint) VALUES (?, ?, ?)",
+        (user, challenge_id, hint)
+    )
+
+    cursor.execute(
+        "INSERT INTO submissions (user, challenge_id) VALUES (?, ?)",
+        (user, -cost)
+    )
+
+    cursor.execute(
+        "UPDATE users SET points = points - ? WHERE username=?",
+        (cost, user)
+    )
+
+    conn.commit()
+
+    return {"message": "Hint unlocked"}
