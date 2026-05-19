@@ -464,7 +464,7 @@ function signup(){
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
 
-    fetch("${API}/register", {
+    fetch(`${API}/register`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

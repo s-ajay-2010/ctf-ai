@@ -89,8 +89,7 @@ def login(user: User):
             "is_admin": role == "admin"
             }
     
-    print("PASSWORD:", user.password)
-    print("LEN:", len(user.password))
+    
 
     raise HTTPException(status_code=401, detail="Invalid username or password.")
 
