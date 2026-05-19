@@ -115,3 +115,8 @@ def get_solves():
     rows = cursor.fetchall()
 
     return [{"user": r[0], "challenge_id": r[1]} for r in rows]
+
+
+@app.get("/")
+def root():
+    return {"status": "backend alive"}

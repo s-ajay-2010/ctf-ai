@@ -1,6 +1,4 @@
 .env
-/backend/venv
-/backend/__pycache__
-/.vscode
-/backend/ctf.db
+.vscode
 idk.txt
+__pycache__
