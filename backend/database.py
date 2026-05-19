@@ -12,7 +12,8 @@ def init_db():
             username TEXT UNIQUE,
             password TEXT,
             role TEXT DEFAULT 'user',
-            points INTEGER DEFAULT 0
+            points INTEGER DEFAULT 0,
+            is_admin INTEGER DEFAULT 0
         )
     """)
     
