@@ -7,10 +7,19 @@
 
 # 
 
-### The default admin credentials are: 
+### The default admin credentials
 ``` 
 Username: admin
 Password: admin
+```
+
+### Demo credentials
+```
+Username: user_1
+Password: 12345
+
+Username: user_2
+Password: 15324
 ```
 so please change it in db if you want protection:)
 ### 
