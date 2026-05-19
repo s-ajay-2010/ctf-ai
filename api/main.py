@@ -123,4 +123,4 @@ def get_solves():
 
 
 
-app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
+app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
