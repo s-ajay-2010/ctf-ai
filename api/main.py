@@ -12,6 +12,8 @@ from challenges import router as challenge_router
 from deps import get_current_user
 from fastapi.middleware.cors import CORSMiddleware
 from database import init_db, get_cursor, conn
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
 init_db()
 
@@ -52,7 +54,7 @@ def verify_password(plain, hashed):
 
 @app.get("/")
 def home():
-    return{"message": "CTF backend is ready!!"}
+    return FileResponse("frontend/login.html")
 
 
 
@@ -117,6 +119,6 @@ def get_solves():
     return [{"user": r[0], "challenge_id": r[1]} for r in rows]
 
 
-@app.get("/")
-def root():
-    return {"status": "backend alive"}
+
+
+app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
