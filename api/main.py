@@ -60,7 +60,19 @@ def home():
 
 @app.post("/register")
 def register(user: User):
-    return {"message": "Sign-up disabled on demo deployment. Please use the default credentials in README:)"}
+    cursor = get_cursor()
+    cursor.execute("SELECT * FROM users WHERE username=?", (user.username,))
+    if cursor.fetchone():
+        raise HTTPException(status_code=400, detail="User exists")
+    
+    cursor.execute(
+        "INSERT INTO users (username, password) VALUES (?, ?)",
+        (user.username, hash_password(user.password))
+    )
+
+    conn.commit()
+
+    return {"msg": "User registered successfully"}
 
 @app.post("/login")
 def login(user: User):
