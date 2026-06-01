@@ -1,6 +1,15 @@
-import sqlite3
+import libsql
+import os
+from dotenv import load_dotenv
 
-conn = sqlite3.connect("ctf.db", check_same_thread=False)
+load_dotenv(override=True)
+
+conn = libsql.connect(
+    database=os.environ["TURSO_DATABASE_URL"],
+    auth_token=os.environ["TURSO_AUTH_TOKEN"],
+)
+
+
 def get_cursor():
     return conn.cursor()
 
@@ -62,3 +71,5 @@ def init_db():
     conn.commit()
 
 
+init_db()
+print("works")
