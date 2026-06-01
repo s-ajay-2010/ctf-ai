@@ -2,7 +2,7 @@
 <html>
     <head>
         <title>Sign-Up</title>
-        <link rel="stylesheet" href="/style.css">
+        <link rel="stylesheet" href="style.css">
         <meta charset="UTF-8">
     </head>
     <body>
@@ -14,7 +14,10 @@
                     <input id="password" type="password" placeholder="Password">
                     <img id="eyeIcon" class="eye" src="assets/eye-closed.png" onclick="togglePassword()">
                 </div>
-                <button onclick="signup()">Demo Deployment</button>
+                <button onclick="signup()">Register</button>
+                <p id="msg"></p>
+                <p>Already have an account?<a href="/login.html">Login</a></p>
+                <div id="toast" class="toast"></div>
             </div>
         </div>
         <script src="/script.js"></script>
