@@ -1,19 +1,33 @@
 body {
     font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg, #0f172a, #020617);
+    background: linear-gradient(180deg, #000000, #003009);
+    color: #e2e8f0;
+    padding: 20px;
+}
+
+.body-dashboard {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(180deg,#000000);
     color: #e2e8f0;
     padding: 20px;
 }
 
 h2 {
-    color: #38bdf8;
-    border-bottom: 2px solid #38bdf8;
+    color: #e2e8f0;
+    border-bottom: 2px solid #000000;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+}
+
+.h2-dashboard {
+    color: #e2e8f0;
+    border-bottom: 2px solid #003009;
     padding-bottom: 5px;
     margin-bottom: 15px;
 }
 
 #challenges div {
-    background: #1e293b;
+    background: #002408;
     padding: 15px;
     margin-bottom: 15px;
     border-radius: 10px;
@@ -22,11 +36,11 @@ h2 {
 
 #challenges div:hover{
     transform: scale(1.02);
-    background: #334155;
+    background: #003009;
 }
 
 button {
-    background: #38bdf8;
+    background: linear-gradient(180deg, #00360c, #02aa27, #00360c);
     border: none;
     padding: 6px 12px;
     margin-top: 5px;
@@ -35,7 +49,14 @@ button {
 }
 
 button:hover{
-    background: #0ea5e9;
+    background: #002408;
+}
+
+.padding-dashboard {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
 }
 
 input {
@@ -49,16 +70,17 @@ input {
     display: flex;
 }
 
-.sidebar{
+.sidebar {
     width:220px;
-    background: #020617;
-    height: 100vh;
+    background: linear-gradient(180deg, #002307, #001103);
+    height: flex;
     padding: 20px;
-    border-right: 1px solid #1e293b;
+    border-right: 1px solid #000000;
+    border-radius: 20px;
 }
 
 .sidebar h2 {
-    color: #38bdf8;
+    color: #079112;
 }
 
 .sidebar a {
@@ -69,7 +91,7 @@ input {
 }
 
 .sidebar a:hover {
-    color: #38bdf8;
+    color: #006a13;
 }
 
 .content {
@@ -77,22 +99,27 @@ input {
     padding: 20px;
 }
 
+.span-dashboard {
+    border-bottom: 2px solid #003009;
+    display: flex;
+}
+
 .card {
-    background: #1e293b;
+    background: #002408;
     padding: 15px;
     border-radius: 10px;
     margin-bottom: 15px;
-    border: 1px solid #334155;
+    border: 1px solid #000000;
     transition: 0.2s;
 }
 
 .card:hover {
-    border-color: #38bdf8;
+    border-color: #262626;
     transform: scale(1.01);
 }
 
 #scoreboard p{
-    background: #1e293b;
+    background: #002408;
     padding: 10px;
     border-radius: 8px;
     margin-bottom: 25px;
@@ -108,20 +135,31 @@ input {
 .progress-bar {
     width: 200px;
     height: 8px;
-    background: #1e293b;
+    background: #01380b ;
     border-radius: 10px;
     margin-left: 10px;
 }
 
+/* .logout {
+    background: linear-gradient(180deg, #00360c, #02aa27, #00360c);
+    border: none;
+    padding: 6px 12px;
+    margin-top: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 200px;
+    height: 8px;
+    background: #01380b ;
+    border-radius: 10px;
+    margin-left: 10px;
+} */
+
 #progress-fill {
     height: 100%;
-    background: #38bdf8;
+    background: #006d14;
     width: 0%;
     border-radius: 10px;
 }
-
-
-
 
 .toast {
     position: fixed;
@@ -141,8 +179,6 @@ input {
     opacity: 1;
 }
 
-
-
 .card.solved {
     animation: pop 0.3s ease;
 }
@@ -153,33 +189,114 @@ input {
     100% { transform: scale(1); }
 }
 
+select {
+    background: #003009;
+    color: #e2e8f0;
+    padding: 8px 12px;
+    border: 1px solid #006d14;
+    border-radius: 8px;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+select:hover {
+    background: #00450d;
+}
+
+select:focus {
+    outline: none;
+    box-shadow: 0 0 10px rgba(0, 255, 100, 0.3)
+}
+
+.select-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.select-wrapper select {
+    padding-right: 30px;
+}
+
+.select-wrapper::after{
+    content: "▼";
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #22c55e;
+}
+
+.select {
+    background: #003009;
+    color: #e2e8f0;
+    padding: 8px 12px;
+    border: 1px solid #006d14;
+    border-radius: 8px;
+    cursor: cursor;
+}
+
+.card-admin {
+    background: linear-gradient(180deg, #003009, #000000);
+    color: #e2e8f0;
+    padding: 10px 20px 10px 20px;
+    width: 320px;
+    border-radius: 12px;
+    box-shadow: 0 0 6px rgb(48, 126, 0);
+    text-align: center;
+    border: 1px liner-gradient(180deg, #003009, #000000);
+}
+
+.card-admin input{
+    background: #003009;
+    color: #e2e8f0;
+    width: 100%;
+    padding: 10px;
+    margin: 1px;
+    border: 1px solid #000000;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.card-admin button{
+    width: 100%;
+    padding: 10px;
+    background: #002408;
+    border: none;
+    color: white;
+    border-radius: 24px;
+    cursor: pointer;
+    font-weight: bold;
+}
 
 .auth-container {
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(135deg, #0f172a, #020617);
+    background: linear-gradient(180deg, #000000, #003009);
 }
 
 .auth-card {
-    background: #0f172a;
+    background: linear-gradient(180deg, #003009, #000000);
     color: #e2e8f0;
     padding: 30px;
     width: 320px;
     border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    box-shadow: -2px 0px 20px rgb(48, 126, 0);
     text-align: center;
-    border: 1px solid #334155;
+    border: 1px liner-gradient(180deg, #003009, #000000);
 }
 
 .auth-card input {
-    background: #020617;
+    background: #003009;
     color: #e2e8f0;
     width: 100%;
     padding: 10px;
     margin: 10px 0;
-    border: 1px solid #334155;
+    border: 1px solid #000000;
     border-radius: 6px;
     box-sizing: border-box;
 }
@@ -187,16 +304,16 @@ input {
 .auth-card button {
     width: 100%;
     padding: 10px;
-    background: #38bdf8;
+    background: #002408;
     border: none;
     color: white;
-    border-radius: 6px;
+    border-radius: 24px;
     cursor: pointer;
     font-weight: bold;
 }
 
 .auth-card button:hover {
-    background: #0ea5e9;
+    background: #003009;
 }
 
 .password-box {

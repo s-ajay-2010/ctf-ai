@@ -10,7 +10,10 @@
             <div class="auth-card">
                 <h2>Login</h2>
                 <input id="username" placeholder="Username"><br><br>
-                <input id="password" type="password" placeholder="Password"><br><br>
+                <div class="password-box">
+                    <input id="password" type="password" placeholder="Password">
+                    <img id="eyeIcon" class="eye" src="assets/eye-closed.png" onclick="togglePassword()">
+                </div>
                 <button onclick="login()">Login</button>
                 <p id="msg"></p>
                 <p>Don't have an account?<a href="signup.html">Sign Up</a></p>

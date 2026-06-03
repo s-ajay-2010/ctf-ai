@@ -134,7 +134,7 @@ async function loadScoreboard(){
         if(u.user === currentUser){
             userRank = rank;
         }
-        const highlight = u.user === currentUser ? "style='color: #38bdf8'" : "";
+        const highlight = u.user === currentUser ? "style='color: #00ad20'" : "";
 
         let medal = "";
 

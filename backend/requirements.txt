@@ -4,6 +4,9 @@ fastapi
 pydantic
 python-jose
 datetime
+bcrypt==4.3.0
 passlib[bcrypt]
 uvicorn
 # os
+libsql
+libsql-client
