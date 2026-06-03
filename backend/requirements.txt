@@ -5,7 +5,7 @@ pydantic
 python-jose
 datetime
 bcrypt==4.3.0
-passlib[bcrypt]
+passlib[bcrypt]==1.7.4
 uvicorn
 # os
 libsql
