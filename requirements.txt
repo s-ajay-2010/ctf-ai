@@ -9,3 +9,4 @@ bcrypt==4.0.1
 uvicorn
 # os
 libsql
+libsql-client

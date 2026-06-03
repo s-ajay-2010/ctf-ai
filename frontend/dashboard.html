@@ -2,29 +2,35 @@
 <html>
     <head>
         <title>Dashboard</title>
-        <link rel="stylesheet" href="/style.css">
+        <link rel="stylesheet" href="style.css">
         <meta charset="UTF-8">
     </head>
-    <body>
-        <input id="search" placeholder="Search challenges!!" oninput="loadChallenges()">
-        <select id="category-filter" onchange="loadChallenges()">
-            <option value="">All Categories</option>
-            <option value="Web">Web</option>
-            <option value="Crypto">Crypto</option>
-        </select>
-
-        <select id="difficulty-filter" onchange="loadChallenges()">
-            <option value="">All Difficulty</option>
-            <option value="Easy">Easy</option>
-            <option value="Medium">Medium</option>
-            <option value="Hard">Hard</option>
-        </select>
-
-        <select id="sort-filter" onchange="loadChallenges()">
-            <option value="">Sort By</option>
-            <option value="">Points</option>
-            <option value="solves">Solves</option>
-        </select>
+    <body class="body-dashboard">
+        <div class="padding-dashboard">
+            <input class="select" id="search" placeholder="Search challenges" oninput="loadChallenges()">
+            <div class="select-wrapper">
+                <select id="category-filter" onchange="loadChallenges()">
+                    <option value="">All Categories</option>
+                    <option value="Web">Web</option>
+                    <option value="Crypto">Crypto</option>
+                </select>
+            </div>
+            <div class="select-wrapper">
+                <select id="difficulty-filter" onchange="loadChallenges()">
+                    <option value="">All Difficulty</option>
+                    <option value="Easy">Easy</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Hard">Hard</option>
+                </select>
+            </div>
+            <div class="select-wrapper">
+                <select id="sort-filter" onchange="loadChallenges()">
+                    <option value="">Sort By</option>
+                    <option value="points">Points</option>
+                    <option value="solves">Solves</option>
+                </select>
+            </div>
+        </div>
 
         <!-- #flag{why_are_you_here_??} -->
 
@@ -37,9 +43,8 @@
 
             <main class="content">
                 <div id="challenges-section">
-                    <h2>Dashboard</h2>
-                    <span id="username-display"></span>
-                    <button onclick="logout()">Logout</button>
+                    <h2 class="h2-dashboard">Dashboard</h2>
+                    <span class="span-dashboard" id="username-display"></span>
                     <div id="challenges"></div>
                 </div>
                 
@@ -49,18 +54,18 @@
                 </div>
 
                 <div id="activity-section">
-                    <h2>Recent Activity</h2>
+                    <h2 class="h2-dashboard">Recent Activity</h2>
                     <div id="activity"></div>
                 </div>
             </main>
 
             <div class="progress-bar">
                 <div id="progress-fill"></div>
+                <button onclick="logout()">Logout</button>
             </div>
 
         </div>
-        <script src="/script.js"></script>
+        <script src="script.js"></script>
         <div id="toast" class="toast"></div>
     </body>
 </html>
-

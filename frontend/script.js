@@ -1,4 +1,4 @@
-const API = window.location.origin;
+const API = "http://127.0.0.1:8000";
 
 function safe(str){
     return String(str)
@@ -134,7 +134,7 @@ async function loadScoreboard(){
         if(u.user === currentUser){
             userRank = rank;
         }
-        const highlight = u.user === currentUser ? "style='color: #38bdf8'" : "";
+        const highlight = u.user === currentUser ? "style='color: #00ad20'" : "";
 
         let medal = "";
 
@@ -429,7 +429,7 @@ function editChallenge(id, title, description, flag, points, category, difficult
     }
     
 
-    fetch(`${API}/admin/edit/${id}`,{
+    fetch(`http://127.0.0.1:8000/admin/edit/${id}`,{
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
@@ -464,7 +464,7 @@ function signup(){
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
 
-    fetch(`${API}/register`, {
+    fetch("http://127.0.0.1:8000/register", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -574,5 +574,4 @@ if(window.location.pathname.includes("dashboard.html")){
 if(window.location.pathname.includes("admin.html")){
     loadAdminChallenges();
 }
-
 
