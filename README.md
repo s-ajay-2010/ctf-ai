@@ -1,6 +1,7 @@
 # Branch for vercel deployment.
 
 ## Steps:
+- Get a db in TursoDB or any other serverless SQL service.
 - Fork this repo.
 - Add your environment variables in vercel.
 - Deploy the project.
