@@ -1,4 +1,4 @@
-const API = "http://127.0.0.1:8000";
+const API = window.location.origin;
 
 function safe(str){
     return String(str)
@@ -429,7 +429,7 @@ function editChallenge(id, title, description, flag, points, category, difficult
     }
     
 
-    fetch(`http://127.0.0.1:8000/admin/edit/${id}`,{
+    fetch(`${API}/admin/edit/${id}`,{
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
@@ -464,7 +464,7 @@ function signup(){
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
 
-    fetch("http://127.0.0.1:8000/register", {
+    fetch(`${API}/register`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -574,4 +574,5 @@ if(window.location.pathname.includes("dashboard.html")){
 if(window.location.pathname.includes("admin.html")){
     loadAdminChallenges();
 }
+
 
