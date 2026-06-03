@@ -140,20 +140,6 @@ input {
     margin-left: 10px;
 }
 
-/* .logout {
-    background: linear-gradient(180deg, #00360c, #02aa27, #00360c);
-    border: none;
-    padding: 6px 12px;
-    margin-top: 5px;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 200px;
-    height: 8px;
-    background: #01380b ;
-    border-radius: 10px;
-    margin-left: 10px;
-} */
-
 #progress-fill {
     height: 100%;
     background: #006d14;
