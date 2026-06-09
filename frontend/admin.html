@@ -13,8 +13,20 @@
             <input id="desc" placeholder="Description"><br><br>
             <input id="flag" placeholder="Flag"><br><br>
             <input id="points" placeholder="Points"><br><br>
-            <input id="category" placeholder="Category"><br><br>
-            <input id="difficulty" placeholder="Difficulty"><br><br>
+            <div class="select-wrapper">
+                <select id="category">
+                    <option value="Web">Web</option>
+                    <option value="Crypto">Crypto</option>
+                    <option value="Both">Both</option>
+                </select>
+            </div><br><br>
+            <div class="select-wrapper">
+                <select id="difficulty">
+                    <option value="Easy">Easy</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Hard">Hard</option>
+                </select>
+            </div>
             <input id="hints" placeholder="Hints(comma separated)"><br><br>
                 
             <button onclick="createChallenge()">Create</button>
@@ -26,6 +38,7 @@
 
         <h3>Existing Challenges</h3>
         <div id="admin-challenges"></div>
+        <div id="toast" class="toast"></div>
         
     </body>
 </html>
