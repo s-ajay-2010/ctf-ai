@@ -257,6 +257,16 @@ select:focus {
     font-weight: bold;
 }
 
+.card-admin .select-wrapper{
+    width: 100%;
+}
+
+.card-admin select{
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
 .auth-container {
     height: 100vh;
     display: flex;

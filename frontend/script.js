@@ -91,6 +91,11 @@ async function getHints(id){
 
     const data = await res.json();
     const container = document.getElementById(`hints-${id}`);
+    if(data.hints.length === 0){
+        container.innerHTML = "<p>No hints available</p>"
+        showToast("No hints found in db:(");
+        return;
+    }
     container.innerHTML = data.hints.map(h => `<p>
         Hint(${h.cost} pts):
         <span data-hint="${encodeURIComponent(h.hint)}" data-cost="${h.cost}" onclick="unlockHint(this)" style="cursor:pointer; color:#38bdf8;">
@@ -192,7 +197,7 @@ async function loadChallenges(){
     }
 
     if(category){
-        filtered = filtered.filter(c => c.category === category);
+        filtered = filtered.filter(c => c.category === category || c.category === "Both");
     }
     if(difficulty){
         filtered = filtered.filter(c => c.difficulty === difficulty);
@@ -266,6 +271,11 @@ async function createChallenge(){
 
     const result = await res.json();
     document.getElementById("msg").innerText = result.message;
+
+    if(!res.ok){
+        showToast(result.detail || "Challenge creation failed.", "error");
+        return;
+    }
 
     loadAdminChallenges();
 }
@@ -453,7 +463,7 @@ function editChallenge(id, title, description, flag, points, category, difficult
     })
     .then(data => {
         console.log("SERVER RESPONSE:", data);
-        alert(data.message || data.detail);
+        showToast(data.message || data.detail);
         location.reload();
     });
 }

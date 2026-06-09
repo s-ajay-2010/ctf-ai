@@ -123,9 +123,6 @@ def get_hints(challenge_id: int, user: str = Depends(get_current_user)):
    )
 
    hints = [{"hint": row[0], "cost": row[1]} for row in cursor.fetchall()]
-
-   if not hints:
-       raise HTTPException(status_code=404, detail="No hints found")
    
    return {"hints": hints}
 
