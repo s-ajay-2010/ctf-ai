@@ -23,7 +23,9 @@ Password: 12345
 Username: user_2
 Password: 15324
 ```
-so please change it in db(please get the pre-configured db from master branch:) ) if you want protection:)
+so please change it in db if you want protection:)
+
+P.S.: Please get the pre-configured db from master branch(It doesn't have demo challenges) :)
 ### 
 
 The url is for demo and NOT a production level deployment.
